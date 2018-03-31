@@ -389,46 +389,47 @@ def plot_mask_points(dataset, config, model, filter=True, image_id=None):
         axx[4, i].set_title(fi_class_names_[20 + i])
         axx[4, i].imshow(gt_mask[0, :, :, 20 + i], interpolation='none')
     plt.show()
+if __name__== '__main__':
 
-# Training dataset
-dataset_train = FIDataset()
-dataset_train.load_FI(category='train')
-dataset_train.prepare()
+    # Training dataset
+    dataset_train = FIDataset()
+    dataset_train.load_FI(category='train')
+    dataset_train.prepare()
 
-# Validation dataset
-dataset_val = FIDataset()
-dataset_val.load_FI(category='val')
-dataset_val.prepare()
+    # Validation dataset
+    dataset_val = FIDataset()
+    dataset_val.load_FI(category='val')
+    dataset_val.prepare()
 
-#print("Classes: {}.\n".format(dataset_train.class_names))
-#print("Train Images: {}.\n".format(len(dataset_train.image_ids)))
-print("Valid Images: {}".format(len(dataset_val.image_ids)))
+    #print("Classes: {}.\n".format(dataset_train.class_names))
+    #print("Train Images: {}.\n".format(len(dataset_train.image_ids)))
+    print("Valid Images: {}".format(len(dataset_val.image_ids)))
 
-DEVICE = "/gpu:0"
-with tf.device(DEVICE):
-    model = modellib.MaskRCNN(mode='training', config=config, model_dir=MODEL_DIR)
+    DEVICE = "/gpu:0"
+    with tf.device(DEVICE):
+        model = modellib.MaskRCNN(mode='training', config=config, model_dir=MODEL_DIR)
 
-path_save = 'mask_rcnn_coco.h5'
-model.load_weights(COCO_MODEL_PATH,exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",
+    path_save = 'mask_rcnn_coco.h5'
+    model.load_weights(COCO_MODEL_PATH,exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",
                                 "mrcnn_bbox", "mrcnn_mask"], by_name=True)
 
-# Training - Stage 1
-print("Train heads")
-model.train(dataset_train, dataset_val,
+    # Training - Stage 1
+    print("Train heads")
+    model.train(dataset_train, dataset_val,
             learning_rate=config.LEARNING_RATE,
             epochs=15,
             layers='heads')
-# Training - Stage 2
-# Finetune layers from ResNet stage 4 and up
-print("Training Resnet layer 4+")
-model.train(dataset_train, dataset_val,
+    # Training - Stage 2
+    # Finetune layers from ResNet stage 4 and up
+    print("Training Resnet layer 4+")
+    model.train(dataset_train, dataset_val,
             learning_rate=config.LEARNING_RATE / 10,
             epochs=20,
             layers='4+')
-# Training - Stage 3
-# Finetune layers from ResNet stage 3 and up
-print("Training Resnet layer 3+")
-model.train(dataset_train, dataset_val,
+    # Training - Stage 3
+    # Finetune layers from ResNet stage 3 and up
+    print("Training Resnet layer 3+")
+    model.train(dataset_train, dataset_val,
             learning_rate=config.LEARNING_RATE / 100,
             epochs=100,
             layers='all')

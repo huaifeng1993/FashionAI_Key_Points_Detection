@@ -1743,7 +1743,7 @@ def load_image_gt_keypoints(dataset, config, image_id, augment=True,
         max_dim=config.IMAGE_MAX_DIM,
         padding=config.IMAGE_PADDING)
     #mask = utils.resize_mask(mask, scale, padding)
-    bbox = utils.extract_fi_bboxes(keypoints)
+    bbox = utils.extract_fi_bboxes(keypoints,image.shape[:2], scale, padding)
     keypoints = utils.resize_keypoints(keypoints, image.shape[:2], scale, padding)
 
     # Random horizontal flips.

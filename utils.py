@@ -108,7 +108,7 @@ def extract_bboxes(mask):
         boxes[i] = np.array([y1, x1, y2, x2])
     return boxes.astype(np.int32)
 
-def extract_fi_bboxes(mask):
+def extract_fi_bboxes(mask,new_size,scale,padding):
     """Compute bounding boxes from masks.
     mask: [height, width, num_instances]. Mask pixels are either 1 or 0.
     Returns: bbox array [num_instances, (y1, x1, y2, x2)].
@@ -137,8 +137,23 @@ def extract_fi_bboxes(mask):
         horizontal_indicies = m[np.where(m[:, 1] > 0), 1]
         y1 = horizontal_indicies.min()
         y2 = horizontal_indicies.max() + 1
+        x1,y1 = resize_box(x1,y1,new_size,scale,padding)
+        x2,y2 = resize_box(x2,y2,new_size,scale,padding)
         boxes[i] = np.array([y1, x1, y2, x2])
+        # print(boxes[i])
     return boxes.astype(np.int32)
+
+def resize_box(x,y,new_size,scale,padding):
+    x = int(x * scale + 0.5)
+    y = int(y * scale + 0.5)
+    if (x >= new_size[1]):
+        x = new_size[1] - 1
+    if (y >= new_size[0]):
+        y = new_size[0] - 1
+    # padding
+    x = x + padding[1][0]
+    y = y + padding[0][0]
+    return x,y
 
 def compute_iou(box, boxes, box_area, boxes_area):
     """Calculates IoU of the given box with the array of the given boxes.
