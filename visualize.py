@@ -335,11 +335,13 @@ def display_keypoints(image, boxes, keypoints, class_ids, class_names,
         ax.text(x1, y1 + 8, caption,
                 color='w', size=11, backgroundcolor="none")
         # Keypoints: num_person, num_keypoint, 3
+        keypoints_count = 0
         for Joint in keypoints[i]:
             if(Joint[2]!=0):
-                circle = patches.Circle((Joint[0],Joint[1]),radius=1,edgecolor=color,facecolor='none')
+                circle = patches.Circle((Joint[0],Joint[1]),radius=3,edgecolor=(0,1,0),facecolor='none',linewidth=3)
                 ax.add_patch(circle)
-
+                keypoints_count+=1
+        print('There are', keypoints_count, ' keypoints in pic!')
         # Skeleton: 19*2
         if(skeleton != None):
             for connection in skeleton:

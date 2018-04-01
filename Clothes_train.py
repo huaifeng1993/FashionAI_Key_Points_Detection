@@ -6,7 +6,6 @@ import re
 import time
 import numpy as np
 import matplotlib
-import matplotlib.pyplot as plt
 import pandas as pd
 import tensorflow as tf
 from config import Config
@@ -46,7 +45,7 @@ class FIConfig(Config):
     # Train on 1 GPU and 8 images per GPU. We can put multiple images on each
     # GPU because the images are small. Batch size is 8 (GPUs * images/GPU).
     GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
+    IMAGES_PER_GPU = 2
     NUM_KEYPOINTS = 24
     KEYPOINT_MASK_SHAPE = [56, 56]
     # Number of classes (including background)
@@ -69,17 +68,6 @@ class FIConfig(Config):
 
 config = FIConfig()
 
-
-def get_ax(rows=1, cols=1, size=8):
-    """Return a Matplotlib Axes array to be used in
-    all visualizations in the notebook. Provide a
-    central point to control graph sizes.
-
-    Change the default size attribute to control the size
-    of rendered images
-    """
-    _, ax = plt.subplots(rows, cols, figsize=(size * cols, size * rows))
-    return ax
 
 def pic_height_width(filepath):
     fp = open(filepath, 'rb')
@@ -201,64 +189,6 @@ class FIDataset(utils.Dataset):
             return super(self.__class__).load_mask(image_id)
 
     def load_keypoints(self, image_id):
-        # """Load person keypoints for the given image.
-        #
-        # Returns:
-        # key_points: num_keypoints coordinates and visibility (x,y,v)  [num_person,num_keypoints,3] of num_person
-        # masks: A bool array of shape [height, width, instance count] with
-        #     one mask per instance.
-        # class_ids: a 1D array of class IDs of the instance masks, here is always equal to [num_person, 1]
-        # """
-        # # If not a COCO image, delegate to parent class.
-        # image_info = self.image_info[image_id]
-        # if image_info["source"] != "coco":
-        #     return super(CocoDataset, self).load_mask(image_id)
-        #
-        # keypoints = []
-        # class_ids = []
-        # instance_masks = []
-        # annotations = self.image_info[image_id]["annotations"]
-        # # Build mask of shape [height, width, instance_count] and list
-        # # of class IDs that correspond to each channel of the mask.
-        # for annotation in annotations:
-        #     class_id = self.map_source_class_id(
-        #         "coco.{}".format(annotation['category_id']))
-        #     assert class_id == 1
-        #     if class_id:
-        #
-        #         #load masks
-        #         m = self.annToMask(annotation, image_info["height"],
-        #                            image_info["width"])
-        #         # Some objects are so small that they're less than 1 pixel area
-        #         # and end up rounded out. Skip those objects.
-        #         if m.max() < 1:
-        #             continue
-        #         # Is it a crowd? If so, use a negative class ID.
-        #         if annotation['iscrowd']:
-        #             # Use negative class ID for crowds
-        #             class_id *= -1
-        #             # For crowd masks, annToMask() sometimes returns a mask
-        #             # smaller than the given dimensions. If so, resize it.
-        #             if m.shape[0] != image_info["height"] or m.shape[1] != image_info["width"]:
-        #                 m = np.ones([image_info["height"], image_info["width"]], dtype=bool)
-        #         instance_masks.append(m)
-        #         #load keypoints
-        #         keypoint = annotation["keypoints"]
-        #         keypoint = np.reshape(keypoint,(-1,3))
-        #
-        #         keypoints.append(keypoint)
-        #         class_ids.append(class_id)
-
-
-        # Pack instance masks into an array
-        # if class_ids:
-        #     keypoints = np.array(keypoints,dtype=np.int32)
-        #     class_ids = np.array(class_ids, dtype=np.int32)
-        #     masks = np.stack(instance_masks, axis=2)
-        #     return keypoints, masks, class_ids
-        # else:
-        #     # Call super class to return an empty mask
-        #     return super(CocoDataset, self).load_keypoints(image_id)
         """Generate instance masks for shapes of the given image ID.
         """
         info = self.image_info[image_id]
@@ -289,106 +219,6 @@ class FIDataset(utils.Dataset):
             return super(self.__class__).load_keypoints(image_id)
 
 
-
-def plot_mask_points(dataset, config, model, filter=True, image_id=None):
-    if not image_id:
-        image_id = random.choice(dataset.image_ids)
-    original_image, image_meta, gt_bbox, gt_mask = modellib.load_image_gt(dataset,
-                                                                          config,
-                                                                          image_id, use_mini_mask=False)
-
-    log("original_image", original_image)
-    log("image_meta", image_meta)
-    log("gt_bbox", gt_bbox)
-    log("gt_mask", gt_mask)
-
-    mrcnn = model.run_graph([original_image], [
-        ("detections", model.keras_model.get_layer("mrcnn_detection").output),
-        ("masks", model.keras_model.get_layer("mrcnn_mask").output),
-        ("mask_classes", model.keras_model.get_layer("mrcnn_class_mask").output),
-    ])
-    det_ix = mrcnn['detections'][0, :, 4]
-    det_count = np.where(det_ix == 0)[0][0]
-    det_masks = mrcnn['masks'][0, :det_count, :, :, :]
-    det_boxes = mrcnn['detections'][0, :det_count, :]
-    det_mask_classes = np.argmax(mrcnn['mask_classes'][0, :det_count, :, :], axis=2)
-    det_mask_classes = np.where(det_mask_classes == 0, np.ones_like(det_mask_classes), np.zeros_like(det_mask_classes))
-
-    visualize.draw_boxes(original_image, refined_boxes=det_boxes[:, :4])
-    _, ax = plt.subplots(5, 5)
-    for i in range(5):
-        ax[0, i].set_title(fi_class_names_[i])
-        if filter:
-            m = np.where(det_masks[0, :, :, i] > 0.8, det_masks[0, :, :, i], 0)
-            m = np.where(m == m.max(), 1, 0)
-            m = m * det_mask_classes[0, i]
-        else:
-            m = det_masks[0, :, :, i] * det_mask_classes[0, i]
-        ax[0, i].imshow(m, interpolation='none')
-    for i in range(5):
-        ax[1, i].set_title(fi_class_names_[5 + i])
-        if filter:
-            m = np.where(det_masks[0, :, :, 5 + i] > 0.8, det_masks[0, :, :, 5 + i], 0)
-            m = np.where(m == m.max(), 1, 0)
-            m = m * det_mask_classes[0, 5 + i]
-        else:
-            m = det_masks[0, :, :, 5 + i] * det_mask_classes[0, 5 + i]
-        ax[1, i].imshow(m, interpolation='none')
-    for i in range(5):
-        ax[2, i].set_title(fi_class_names_[10 + i])
-        if filter:
-            m = np.where(det_masks[0, :, :, 10 + i] > 0.8, det_masks[0, :, :, 10 + i], 0)
-            m = np.where(m == m.max(), 1, 0)
-            m = m * det_mask_classes[0, 10 + i]
-        else:
-            m = det_masks[0, :, :, 10 + i] * det_mask_classes[0, 10 + i]
-        ax[2, i].imshow(m, interpolation='none')
-    for i in range(5):
-        ax[3, i].set_title(fi_class_names_[15 + i])
-        if filter:
-            m = np.where(det_masks[0, :, :, 15 + i] > 0.8, det_masks[0, :, :, 15 + i], 0)
-            m = np.where(m == m.max(), 1, 0)
-            m = m * det_mask_classes[0, 15 + i]
-        else:
-            m = det_masks[0, :, :, 15 + i] * det_mask_classes[0, 15 + i]
-        ax[3, i].imshow(m, interpolation='none')
-    for i in range(4):
-        ax[4, i].set_title(fi_class_names_[20 + i])
-        if filter:
-            m = np.where(det_masks[0, :, :, 20 + i] > 0.8, det_masks[0, :, :, 20 + i], 0)
-            m = np.where(m == m.max(), 1, 0)
-            m = m * det_mask_classes[0, 20 + i]
-        else:
-            m = det_masks[0, :, :, 20 + i] * det_mask_classes[0, 20 + i]
-        ax[4, i].imshow(m, interpolation='none')
-
-    ax[4, 4].set_title('Real image')
-    visualize.draw_boxes(original_image, refined_boxes=det_boxes[:1, :4], ax=ax[4, 4])
-
-    # Plot the gt mask points
-    _, axx = plt.subplots(5, 5)
-    axx[4, 4].set_title('Real image')
-    visualize.draw_boxes(original_image, refined_boxes=gt_bbox[:1, :4], masks=gt_mask,
-                         ax=axx[4, 4])
-    original_image, image_meta, gt_bbox, gt_mask = modellib.load_image_gt(dataset,
-                                                                          config,
-                                                                          image_id, use_mini_mask=True)
-    for i in range(5):
-        axx[0, i].set_title(fi_class_names_[i])
-        axx[0, i].imshow(gt_mask[0, :, :, i], interpolation='none')
-    for i in range(5):
-        axx[1, i].set_title(fi_class_names_[5 + i])
-        axx[1, i].imshow(gt_mask[0, :, :, 5 + i], interpolation='none')
-    for i in range(5):
-        axx[2, i].set_title(fi_class_names_[10 + i])
-        axx[2, i].imshow(gt_mask[0, :, :, 10 + i], interpolation='none')
-    for i in range(5):
-        axx[3, i].set_title(fi_class_names_[15 + i])
-        axx[3, i].imshow(gt_mask[0, :, :, 15 + i], interpolation='none')
-    for i in range(4):
-        axx[4, i].set_title(fi_class_names_[20 + i])
-        axx[4, i].imshow(gt_mask[0, :, :, 20 + i], interpolation='none')
-    plt.show()
 if __name__== '__main__':
 
     # Training dataset
@@ -401,11 +231,11 @@ if __name__== '__main__':
     dataset_val.load_FI(category='val')
     dataset_val.prepare()
 
-    #print("Classes: {}.\n".format(dataset_train.class_names))
-    #print("Train Images: {}.\n".format(len(dataset_train.image_ids)))
+    print("Classes: {}.\n".format(dataset_train.class_names))
+    print("Train Images: {}.\n".format(len(dataset_train.image_ids)))
     print("Valid Images: {}".format(len(dataset_val.image_ids)))
 
-    DEVICE = "/gpu:0"
+    DEVICE = "/gpu:1"
     with tf.device(DEVICE):
         model = modellib.MaskRCNN(mode='training', config=config, model_dir=MODEL_DIR)
 
