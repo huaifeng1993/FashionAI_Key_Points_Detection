@@ -1,18 +1,12 @@
 import os
-import sys
 import random
-import math
 import numpy as np
-import skimage.io
-import matplotlib
-import matplotlib.pyplot as plt
 from config import Config
-import utils
 import model as modellib
 import visualize
 from model import log
 from Clothes_train import FIDataset
-
+from PIL import Image
 # Root directory of the project
 ROOT_DIR = os.getcwd()
 
@@ -25,7 +19,7 @@ COCO_MODEL_PATH = os.path.join(ROOT_DIR, "logs/mask_rcnn_coco.h5")
 
 # Get path to saved weights
 # Either set a specific path or find last trained weights
-model_path = os.path.join(ROOT_DIR, "logs/tf0331/mask_rcnn_fi_0171.h5")
+model_path = os.path.join(ROOT_DIR, "mask_rcnn_fi_0080.h5")
 
 class InferenceConfig(Config):
   # Give the configuration a recognizable name
@@ -84,11 +78,17 @@ dataset_val.prepare()
 # Test on a random image############################################################################
 image_id = random.choice(dataset_val.image_ids)
 print(image_id)
-
+# image_id = 141
 original_image, image_meta, gt_class_id, gt_bbox, gt_keypoint =\
     modellib.load_image_gt_keypoints(dataset_val, inference_config,
                            image_id, augment=False,use_mini_mask=inference_config.USE_MINI_MASK)
 
+class_name = dataset_val.image_info[image_id]['id'].split('/')[1]
+print(class_name)
+image_path = dataset_val.image_info[image_id]['id']
+image_path = os.path.join(ROOT_DIR,'data','train',image_path)
+
+###################################################################################################
 log("original_image", original_image)
 log("image_meta", image_meta)
 log("gt_class_id", gt_class_id)
@@ -97,13 +97,102 @@ log("gt_keypoint", gt_keypoint)
 visualize.display_keypoints(original_image,gt_bbox,gt_keypoint,gt_class_id,dataset_val.class_names)
 #####################################################################################################
 
+
+def key_point_disappear(keypoint_list,box,class_name):
+  keypoints = list()
+  boxes = list()
+  if(class_name=='blouse'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.min(box[:, 0]))
+      index = int(a[0])
+      keypoint = blouse_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = blouse_keypoint(keypoint_list[0])
+      box = box[0]
+  elif (class_name=='dress'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.min(box[:, 0]))
+      index = int(a[0])
+      keypoint = dress_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = dress_keypoint(keypoint_list[0])
+      box = box[0]
+  elif (class_name == 'skirt'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.max(box[:, 0]))
+      index = int(a[0])
+      keypoint = skirt_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = skirt_keypoint(keypoint_list[0])
+      box = box[0]
+  elif (class_name=='outwear'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.min(box[:, 0]))
+      index = int(a[0])
+      keypoint = outwear_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = outwear_keypoint(keypoint_list[0])
+      box = box[0]
+  elif (class_name=='trousers'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.max(box[:, 0]))
+      index = int(a[0])
+      keypoint = trousers_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = trousers_keypoint(keypoint_list[0])
+      box = box[0]
+  keypoints.append(keypoint)
+  boxes.append(box)
+  return np.array(keypoints,dtype= np.int32),np.array(boxes,dtype= np.int32)
+
+def blouse_keypoint(keypoint):
+  keypoint[7:8,2]=0
+  keypoint[15:,2]=0
+  return keypoint
+
+def dress_keypoint(keypoint):
+  keypoint[13:16, 2] = 0
+  keypoint[19:,2] = 0
+  return keypoint
+
+def skirt_keypoint(keypoint):
+  keypoint[:14,2] = 0
+  keypoint[19:,2] = 0
+  return keypoint
+
+def outwear_keypoint(keypoint):
+  keypoint[2, 2] = 0
+  keypoint[15:, 2] = 0
+  return keypoint
+
+def trousers_keypoint(keypoint):
+  keypoint[:14, 2] = 0
+  keypoint[17:18,2] = 0
+  return keypoint
+
 #Predict the keypoint######################################################################################
-results = model.detect_keypoint([original_image], verbose=0)
+fp = open(image_path,'rb')
+read_image = Image.open(fp)
+image = np.asarray(read_image,dtype=np.uint8)
+print(image_path)
+results = model.detect_keypoint([image], verbose=0)
 r = results[0] # for one image
 log("rois",r['rois'])
 log("keypoints",r['keypoints'])
 log("class_ids",r['class_ids'])
 log("keypoints",r['keypoints'])
 
-visualize.display_keypoints(original_image,r['rois'],r['keypoints'],r['class_ids'],dataset_val.class_names)
+
+keypoint,box = key_point_disappear(r['keypoints'],r['rois'],class_name)
+
+print(keypoint)
+visualize.key_point_draw(image,box,keypoint,r['class_ids'],dataset_val.class_names)
+
+
 ###########################################################################################################
+

@@ -19,6 +19,7 @@ from matplotlib.patches import Polygon
 import IPython.display
 import cv2
 import utils
+import scipy.misc
 
 
 ############################################################
@@ -356,10 +357,88 @@ def display_keypoints(image, boxes, keypoints, class_ids, class_names,
 
                     cv2.line(skeleton_image, tuple(Joint_start[:2]), tuple(Joint_end[:2]), [x * 255 for x in color])
     ax.imshow(skeleton_image.astype(np.uint8))
+    print(skeleton_image.shape)
     plt.show()
 
 
+def key_point_draw(image, boxes, keypoints, class_ids, class_names,
+                      skeleton = None, scores=None, title="",
+                      figsize=(16, 16), ax=None,Height=None,Width=None):
+    """
+    boxes: [num_persons, (y1, x1, y2, x2)] in image coordinates.
+    keypoints: [num_persons, 3]
+    class_ids: [num_persons]
+    class_names: list of class names of the dataset
+    scores: (optional) confidence scores for each box
+    figsize: (optional) the size of the image.
+    """
+    # Number of persons
+    N = keypoints.shape[0]
+    if not N:
+        print("\n*** No persons to display *** \n")
+    # else:
+    #     assert boxes.shape[0] == keypoints.shape[0] == class_ids.shape[0]
 
+    if not ax:
+        _, ax = plt.subplots(1, figsize=figsize)
+
+    # Generate random colors
+    colors = random_colors(N)
+
+    # Show area outside image boundaries.
+    height, width = image.shape[:2]
+    ax.set_ylim(height + 10, -10)
+    ax.set_xlim(-10, width + 10)
+    ax.axis('off')
+    ax.set_title(title)
+    skeleton_image = image.astype(np.float32).copy()
+    print(skeleton_image.shape)
+    for i in range(N):
+        color = colors[i]
+
+        # Bounding box
+        if not np.any(boxes[i]):
+            # Skip this instance. Has no bbox. Likely lost in image cropping.
+            continue
+        y1, x1, y2, x2 = boxes[i]
+        p = patches.Rectangle((x1, y1), x2 - x1, y2 - y1, linewidth=2,
+                              alpha=0.7, linestyle="dashed",
+                              edgecolor=color, facecolor='none')
+        # p = cv2.rectangle(skeleton_image,(x1, y1),(x2,y2),color=color,thickness=2)
+        ax.add_patch(p)
+
+        # Label
+        class_id = class_ids[i]
+        score = scores[i] if scores is not None else None
+        label = class_names[class_id]
+        # x = random.randint(x1, (x1 + x2) // 2)
+        caption = "{} {:.3f}".format(label, score) if score else label
+        ax.text(x1, y1 + 8, caption,
+                color='w', size=11, backgroundcolor="none")
+        # Keypoints: num_person, num_keypoint, 3
+        keypoints_count = 0
+        for Joint in keypoints[i]:
+            if(Joint[2]!=0):
+                circle = patches.Circle((Joint[0],Joint[1]),radius=3,edgecolor=(0,1,0),facecolor='none',linewidth=3)
+                ax.add_patch(circle)
+                keypoints_count+=1
+        print('There are', keypoints_count, ' keypoints in pic!')
+        # Skeleton: 19*2
+        if(skeleton != None):
+            for connection in skeleton:
+                joint_start, joint_end = connection - 1  # connection stats from 1 to 17
+
+                Joint_start = keypoints[i][joint_start]
+                Joint_end = keypoints[i][joint_end]
+                # both are Annotated
+                # Joint:(x,y,v)
+                if ((Joint_start[2] != 0) & (Joint_end[2] != 0)):
+                    # print(color)
+
+                    cv2.line(skeleton_image, tuple(Joint_start[:2]), tuple(Joint_end[:2]), [x * 255 for x in color])
+    ax.imshow(skeleton_image.astype(np.uint8))
+
+    plt.show()
 
 
     
@@ -617,6 +696,7 @@ def draw_boxes(image, boxes=None, refined_boxes=None,
                 p = Polygon(verts, facecolor="none", edgecolor=color)
                 ax.add_patch(p)
     ax.imshow(masked_image.astype(np.uint8))
+
 
 
 def display_table(table):

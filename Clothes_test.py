@@ -71,6 +71,9 @@ class InferenceConfig(Config):
     # Maximum number of ground truth instances to use in one image
     MAX_GT_INSTANCES = 128
 
+
+    DETECTION_MAX_INSTANCES = 1
+
 '''
 test data set class
 '''
@@ -108,14 +111,103 @@ class FITestDataset(utils.Dataset):
         image = Image.open(info['path'])
         image = np.array(image)
         return image
+############################滤点###################################
 
+def key_point_disappear(keypoint_list,box,class_name):
+  keypoints = list()
+  boxes = list()
+  if(class_name=='blouse'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.min(box[:, 0]))
+      index = int(a[0])
+      keypoint = blouse_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = blouse_keypoint(keypoint_list[0])
+      box = box[0]
+  elif (class_name=='dress'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.min(box[:, 0]))
+      index = int(a[0])
+      keypoint = dress_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = dress_keypoint(keypoint_list[0])
+      box = box[0]
+  elif (class_name == 'skirt'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.max(box[:, 0]))
+      index = int(a[0])
+      keypoint = skirt_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = skirt_keypoint(keypoint_list[0])
+      box = box[0]
+  elif (class_name=='outwear'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.min(box[:, 0]))
+      index = int(a[0])
+      keypoint = outwear_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = outwear_keypoint(keypoint_list[0])
+      box = box[0]
+  elif (class_name=='trousers'):
+    if (keypoint_list.shape[0] != 1):
+      a = np.where(box[:, 0] == np.max(box[:, 0]))
+      index = int(a[0])
+      keypoint = trousers_keypoint(keypoint_list[index])
+      box = box[index]
+    else:
+      keypoint = trousers_keypoint(keypoint_list[0])
+      box = box[0]
+  keypoints.append(keypoint)
+  boxes.append(box)
+  return np.array(keypoints,dtype= np.int32),np.array(boxes,dtype= np.int32)
+
+def blouse_keypoint(keypoint):
+  keypoint[7:9,2]=0
+  keypoint[15:,2]=0
+  return keypoint
+
+def dress_keypoint(keypoint):
+  keypoint[13:17, 2] = 0
+  keypoint[19:,2] = 0
+  return keypoint
+
+def skirt_keypoint(keypoint):
+  keypoint[:15,2] = 0
+  keypoint[19:,2] = 0
+  return keypoint
+
+def outwear_keypoint(keypoint):
+  keypoint[2, 2] = 0
+  keypoint[15:, 2] = 0
+  return keypoint
+
+def trousers_keypoint(keypoint):
+  keypoint[:15, 2] = 0
+  keypoint[17:19,2] = 0
+  return keypoint
+
+
+'''
+把int类型转为num_num_num格式以便提交
+'''
+def keypoint_to_str(keypoint):
+    keypoint = keypoint.reshape([24, 3])
+    for x in range(24):
+        if keypoint[x][2] != 1:
+            keypoint[x] = [-1, -1, -1]
+    list_keypoint = []
+    for x in keypoint:
+        list_keypoint.append(str(x[0]) + '_' + str(x[1]) + '_' + str(x[2]))
+    return list_keypoint
+#######################################################################
 if __name__ =='__main__':
     dataset_test=FITestDataset()
     dataset_test.load_FI_test()
     dataset_test.prepare()
-
-
-    print(dataset_test.image_ids[1])
 
     #config of model
     inference_config = InferenceConfig()
@@ -126,22 +218,35 @@ if __name__ =='__main__':
                               model_dir=MODEL_DIR)
 
     # Get path to saved weights
-    model_path = os.path.join(ROOT_DIR, "logs/tf0401/mask_rcnn_fi_0080.h5")
+    model_path = os.path.join(ROOT_DIR, "logs/tf0402/mask_rcnn_fi_0087.h5")
     # Load trained weights (fill in path to trained weights here)
     assert model_path != "", "Provide path to trained weights"
     print("Loading weights from ", model_path)
     model.load_weights(model_path, by_name=True)
 
+    ###########################################################################
+    #保存结果到csv
+    ###########################################################################
+    point_to_csv_list=[]
+    #894图片有问题:
+    #2449图片有问题
+    for x in range(0,9996):
+        image=dataset_test.load_image(x) #0为图像id
+        category=dataset_test.image_info[x]['image_category'] #图像类别
+        results = model.detect_keypoint([image], verbose=0)
 
-    image=dataset_test.load_image(29)
-    print(image.shape)
-    results = model.detect_keypoint([image], verbose=0)
+        r = results[0]  # for one image
+        # log("image", image)
+        # log("rois", r['rois'])
+        # log("keypoints", r['keypoints'])
+        # log("class_ids", r['class_ids'])
+        # log("keypoints", r['keypoints'])
 
-    r = results[0]  # for one image
-    log("image", image)
-    log("rois", r['rois'])
-    log("keypoints", r['keypoints'])
-    log("class_ids", r['class_ids'])
-    log("keypoints", r['keypoints'])
+        keypoint, box = key_point_disappear(r['keypoints'], r['rois'], category)
+        #visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
+        point_str=keypoint_to_str(keypoint)
+        point_to_csv_list.append(point_str)
+        print(x)
 
-    visualize.display_keypoints(image, r['rois'], r['keypoints'], r['class_ids'], dataset_test.class_names)
+    point_to_csv=pd.DataFrame(data=np.array(point_to_csv_list).reshape([-1,24]),columns=fi_class_names_)
+    point_to_csv.to_csv('./data/test/result.csv')
