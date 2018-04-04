@@ -53,7 +53,7 @@ class Config(object):
     BACKBONE_STRIDES = [4, 8, 16, 32, 64]
 
     # Number of classification classes (including background)
-    NUM_CLASSES = 1+1  # Override in sub-classes
+    NUM_CLASSES = 1+5  # Override in sub-classes
 
     NUM_KEYPOINTS = 24 #Override in sub-classes
 
