@@ -11,7 +11,7 @@ import tensorflow as tf
 from config import Config
 import utils
 import model as modellib
-import visualize
+#import visualize
 from model import log
 from PIL import Image
 
@@ -19,10 +19,10 @@ from PIL import Image
 ROOT_DIR = os.getcwd()
 
 # Directory to save logs and trained model
-MODEL_DIR = os.path.join(ROOT_DIR, "logs")
+MODEL_DIR = os.path.join(ROOT_DIR, "blouse_logs")
 
 # Local path to trained weights file
-COCO_MODEL_PATH = os.path.join(ROOT_DIR, "logs/mask_rcnn_coco.h5")
+COCO_MODEL_PATH = os.path.join(ROOT_DIR, "blouse_logs/mask_rcnn_fi_0087.h5")
 
 '''添加fashion ai'''
 fi_class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_left',
@@ -31,7 +31,7 @@ fi_class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_
                    'cuff_right_out', 'top_hem_left', 'top_hem_right', 'waistband_left',
                    'waistband_right', 'hemline_left', 'hemline_right', 'crotch',
                    'bottom_left_in', 'bottom_left_out', 'bottom_right_in', 'bottom_right_out']
-fi_class_names = ['blouse','dress','outwear','skirt','trousers']
+fi_class_names = ['blouse']
 
 
 class FIConfig(Config):
@@ -49,7 +49,7 @@ class FIConfig(Config):
     NUM_KEYPOINTS = 24
     KEYPOINT_MASK_SHAPE = [56, 56]
     # Number of classes (including background)
-    NUM_CLASSES = 1 + 5  # background + 24 key_point
+    NUM_CLASSES = 1 + 1  # background + 24 key_point
 
     RPN_TRAIN_ANCHORS_PER_IMAGE = 150
     VALIDATION_STPES = 100
@@ -98,13 +98,14 @@ class FIDataset(utils.Dataset):
 
         annotations = pd.read_csv('./data/train/Annotations/annotations.csv')
         annotations = annotations.append(pd.read_csv('./data/train/Annotations/train.csv'), ignore_index=True)
-
+        annotations = annotations.loc[annotations['image_category'] == fi_class_names[0]]
+        #annotations = annotations.reset_index(drop=True)  # 更新索引
         # 切分test数据集和train数据集
         np.random.seed(42)
         shuffled_indces = np.random.permutation(annotations.shape[0])
-        val_set_size = int(annotations.shape[0] * 0.01)
+        val_set_size = int(annotations.shape[0] * 0.05)
         val_indices = shuffled_indces[:val_set_size]
-        train_indices = shuffled_indces[val_set_size:500]
+        train_indices = shuffled_indces[val_set_size:]
         if category == 'train':
             annotations = annotations.iloc[train_indices]
         elif category == 'val':
@@ -210,8 +211,8 @@ class FIDataset(utils.Dataset):
                     keypoint += [bp[0]-1,bp[1]-1,bp[2]+1]
             keypoint = np.reshape(keypoint,(-1,3))
             keypoints.append(keypoint)
-            #class_ids.append(1)
-        class_ids=np.array([self.class_names.index(image_category)])#改二
+            class_ids.append(1)
+        #class_ids=np.array([self.class_names.index(image_category)])#如果多分类使用此处
         if class_ids:
             keypoints = np.array(keypoints, dtype=np.int32)
             class_ids = np.array(class_ids, dtype=np.int32)
@@ -236,22 +237,30 @@ if __name__== '__main__':
     print("Train Images: {}.\n".format(len(dataset_train.image_ids)))
     print("Valid Images: {}".format(len(dataset_val.image_ids)))
 
-    DEVICE = "/gpu:1"
-    with tf.device(DEVICE):
-        model = modellib.MaskRCNN(mode='training', config=config, model_dir=MODEL_DIR)
 
-    path_save = 'mask_rcnn_coco.h5'
-    model.load_weights(COCO_MODEL_PATH,exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",
-                                "mrcnn_bbox", "mrcnn_mask"], by_name=True)
+    model = modellib.MaskRCNN(mode='training', config=config, model_dir=MODEL_DIR)
 
+    # Which weights to start with?
+    init_with = "coco"  # imagenet, coco, or last
+    if init_with == "coco":
+        # Load weights trained on MS COCO, but skip layers that
+        # are different due to the different number of classes
+        # See README for instructions to download the COCO weights
+        model.load_weights(COCO_MODEL_PATH, by_name=True,
+                           exclude=["mrcnn_class_logits", "mrcnn_bbox_fc",
+                                    "mrcnn_bbox", "mrcnn_mask"])
+    elif init_with == "last":
+        # Load the last model you trained and continue training
+        model.load_weights(model.find_last()[1], by_name=True)
     # Training - Stage 1
     print("Train heads")
     model.train(dataset_train, dataset_val,
             learning_rate=config.LEARNING_RATE,
-            epochs=15,
+            epochs=100,
             layers='heads')
     # Training - Stage 2
     # Finetune layers from ResNet stage 4 and up
+    '''
     print("Training Resnet layer 4+")
     model.train(dataset_train, dataset_val,
             learning_rate=config.LEARNING_RATE / 10,
@@ -264,3 +273,4 @@ if __name__== '__main__':
             learning_rate=config.LEARNING_RATE / 100,
             epochs=100,
             layers='all')
+    '''

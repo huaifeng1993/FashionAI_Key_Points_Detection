@@ -41,7 +41,7 @@ class Config(object):
     # Validation stats are also calculated at each epoch end and they
     # might take a while, so don't set this too small to avoid spending
     # a lot of time on validation stats.
-    STEPS_PER_EPOCH = 5000
+    STEPS_PER_EPOCH = 500
 
     # Number of validation steps to run at the end of every training epoch.
     # A bigger number improves accuracy of validation stats, but slows
@@ -53,7 +53,7 @@ class Config(object):
     BACKBONE_STRIDES = [4, 8, 16, 32, 64]
 
     # Number of classification classes (including background)
-    NUM_CLASSES = 1+5  # Override in sub-classes
+    NUM_CLASSES = 1+1  # Override in sub-classes
 
     NUM_KEYPOINTS = 24 #Override in sub-classes
 

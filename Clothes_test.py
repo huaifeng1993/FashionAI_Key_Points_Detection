@@ -29,7 +29,7 @@ fi_class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_
                    'cuff_right_out', 'top_hem_left', 'top_hem_right', 'waistband_left',
                    'waistband_right', 'hemline_left', 'hemline_right', 'crotch',
                    'bottom_left_in', 'bottom_left_out', 'bottom_right_in', 'bottom_right_out']
-fi_class_names = ['clothing']
+fi_class_names = ['blouse','dress','outwear','skirt','trousers']
 #############################################
 #
 #############################################
@@ -55,7 +55,7 @@ class InferenceConfig(Config):
     NUM_KEYPOINTS = 24
     KEYPOINT_MASK_SHAPE = [56, 56]
     # Number of classes (including background)
-    NUM_CLASSES = 1 + 1  # background + 24 key_point
+    NUM_CLASSES = 1 + 5 # background + 24 key_point
 
     RPN_TRAIN_ANCHORS_PER_IMAGE = 150
     VALIDATION_STPES = 100
@@ -218,7 +218,7 @@ if __name__ =='__main__':
                               model_dir=MODEL_DIR)
 
     # Get path to saved weights
-    model_path = os.path.join(ROOT_DIR, "logs/tf0402/mask_rcnn_fi_0087.h5")
+    model_path = os.path.join(ROOT_DIR, "logs/tf0405/mask_rcnn_fi_0259.h5")
     # Load trained weights (fill in path to trained weights here)
     assert model_path != "", "Provide path to trained weights"
     print("Loading weights from ", model_path)
@@ -230,7 +230,7 @@ if __name__ =='__main__':
     point_to_csv_list=[]
     #894图片有问题:
     #2449图片有问题
-    for x in range(0,9996):
+    for x in range(0,20):
         image=dataset_test.load_image(x) #0为图像id
         category=dataset_test.image_info[x]['image_category'] #图像类别
         results = model.detect_keypoint([image], verbose=0)

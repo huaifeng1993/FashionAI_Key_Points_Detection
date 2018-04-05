@@ -108,7 +108,7 @@ def extract_bboxes(mask):
         boxes[i] = np.array([y1, x1, y2, x2])
     return boxes.astype(np.int32)
 
-def extract_fi_bboxes(mask,new_size,old_size,scale,padding):
+def extract_fi_bboxes(mask,new_size,scale,padding):
     """Compute bounding boxes from masks.
     mask: [height, width, num_instances]. Mask pixels are either 1 or 0.
     Returns: bbox array [num_instances, (y1, x1, y2, x2)].
@@ -134,21 +134,9 @@ def extract_fi_bboxes(mask,new_size,old_size,scale,padding):
         vertical_indicies = m[np.where(m[:, 0] > 0), 0]
         x1 = vertical_indicies.min()
         x2 = vertical_indicies.max() + 1
-        x1 -= 12
-        x2 += 12
-        if(x1 < 0):
-            x1=0
-        if (x2 > old_size[1]):
-            x2 = old_size[1]
         horizontal_indicies = m[np.where(m[:, 1] > 0), 1]
         y1 = horizontal_indicies.min()
         y2 = horizontal_indicies.max() + 1
-        y1 -= 12
-        y2 += 12
-        if(y1 < 0):
-            y1=0
-        if (y2 > old_size[0]):
-            y2 = old_size[0]
         x1,y1 = resize_box(x1,y1,new_size,scale,padding)
         x2,y2 = resize_box(x2,y2,new_size,scale,padding)
         boxes[i] = np.array([y1, x1, y2, x2])
