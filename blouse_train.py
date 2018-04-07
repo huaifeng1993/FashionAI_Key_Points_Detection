@@ -63,7 +63,6 @@ class FIConfig(Config):
     WEIGHT_LOSS = True
     KEYPOINT_THRESHOLD = 0.005
     # Maximum number of ground truth instances to use in one image
-    MAX_GT_INSTANCES = 128
 
 
 config = FIConfig()

@@ -20,6 +20,8 @@ ROOT_DIR = os.getcwd()
 
 # Directory to save logs and trained model
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
+model_path = os.path.join(ROOT_DIR, "blouse_logs/tf0406/mask_rcnn_fi_0259.h5")
+result_save_path='./data/test/blouse_result.csv'
 
 #piont names and class name
 '''添加fashion ai'''
@@ -29,7 +31,7 @@ fi_class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_
                    'cuff_right_out', 'top_hem_left', 'top_hem_right', 'waistband_left',
                    'waistband_right', 'hemline_left', 'hemline_right', 'crotch',
                    'bottom_left_in', 'bottom_left_out', 'bottom_right_in', 'bottom_right_out']
-fi_class_names = ['blouse','dress','outwear','skirt','trousers']
+fi_class_names = ['blouse']
 #############################################
 #
 #############################################
@@ -55,7 +57,7 @@ class InferenceConfig(Config):
     NUM_KEYPOINTS = 24
     KEYPOINT_MASK_SHAPE = [56, 56]
     # Number of classes (including background)
-    NUM_CLASSES = 1 + 5 # background + 24 key_point
+    NUM_CLASSES = 1 + 1 # background + 24 key_point
 
     RPN_TRAIN_ANCHORS_PER_IMAGE = 150
     VALIDATION_STPES = 100
@@ -84,18 +86,17 @@ class FITestDataset(utils.Dataset):
         for i, class_name in enumerate(fi_class_names):
             self.add_class("FI", i + 1, class_name)
         annotations = pd.read_csv('./data/test/test.csv')
+        annotations = annotations.loc[annotations['image_category'] == fi_class_names[0]]
 
 
         for x in range(annotations.shape[0]):
             # bg_color, shapes = self.random_image(height, width)
             id = annotations.loc[x, 'image_id']
             category = annotations.loc[x, 'image_category']
-            print('loading image:%d/%d'%(x,annotations.shape[0]))
+            #print('loading image:%d/%d'%(x,annotations.shape[0]))
             im_path = os.path.join(test_data_path, id)
-
             # height, width = cv2.imread(im_path).shape[0:2]
             width, height = pic_height_width(im_path)
-
             self.add_image("FI", image_id=id, path=im_path,
                            width=width, height=height,
                             image_category=category)  # 添加我的数据
@@ -218,7 +219,6 @@ if __name__ =='__main__':
                               model_dir=MODEL_DIR)
 
     # Get path to saved weights
-    model_path = os.path.join(ROOT_DIR, "logs/tf0405/mask_rcnn_fi_0259.h5")
     # Load trained weights (fill in path to trained weights here)
     assert model_path != "", "Provide path to trained weights"
     print("Loading weights from ", model_path)
@@ -229,10 +229,12 @@ if __name__ =='__main__':
     ###########################################################################
     point_to_csv_list=[]
     #894图片有问题:
-    #2449图片有问题
-    for x in range(0,20):
+    #2449图片有问题dataset_test.num_images
+    for x in range(0,dataset_test.num_images):
         image=dataset_test.load_image(x) #0为图像id
         category=dataset_test.image_info[x]['image_category'] #图像类别
+        image_id=dataset_test.image_info[x]['id']
+
         results = model.detect_keypoint([image], verbose=0)
 
         r = results[0]  # for one image
@@ -243,10 +245,23 @@ if __name__ =='__main__':
         # log("keypoints", r['keypoints'])
 
         keypoint, box = key_point_disappear(r['keypoints'], r['rois'], category)
-        #visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
-        point_str=keypoint_to_str(keypoint)
-        point_to_csv_list.append(point_str)
-        print(x)
 
-    point_to_csv=pd.DataFrame(data=np.array(point_to_csv_list).reshape([-1,24]),columns=fi_class_names_)
-    point_to_csv.to_csv('./data/test/result.csv')
+
+        #visualize.display_keypoints(image,box,keypoint, r['class_ids'], dataset_test.class_names)
+
+        point_str=keypoint_to_str(keypoint)
+        relust_info=[image_id,category]
+        relust_info.extend(point_str)
+
+        point_to_csv_list.append(relust_info)
+        print(x,r'/',dataset_test.num_images)
+
+    '''
+    保存结果
+    '''
+    columns=['image_id','image_category']#设置columns
+    columns.extend(fi_class_names_)      #
+
+    point_to_csv=pd.DataFrame(data=np.array(point_to_csv_list).reshape([-1,26]),
+                              columns=columns)
+    point_to_csv.to_csv(result_save_path,index=False)

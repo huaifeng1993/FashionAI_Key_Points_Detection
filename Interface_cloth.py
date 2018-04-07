@@ -15,6 +15,7 @@ MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 
 # Local path to trained weights file
 COCO_MODEL_PATH = os.path.join(ROOT_DIR, "logs/mask_rcnn_coco.h5")
+
 # Download COCO trained weights from Releases if needed
 
 class InferenceConfig(Config):
@@ -54,7 +55,7 @@ model = modellib.MaskRCNN(mode="inference",
 # Get path to saved weights
 #model_path = model.find_last()[1]
 
-model_path = os.path.join(ROOT_DIR, "logs/tf0401/mask_rcnn_fi_0080.h5")
+model_path = os.path.join(ROOT_DIR, "blouse_logs/tf0406/mask_rcnn_fi_0362.h5")
 # Load trained weights (fill in path to trained weights here)
 assert model_path != "", "Provide path to trained weights"
 print("Loading weights from ", model_path)
@@ -65,9 +66,9 @@ assert inference_config.NAME == "FI"
 # Training dataset
 # load person keypoints dataset
 # Training dataset
-dataset_train = FIDataset()
-dataset_train.load_FI(category='train')
-dataset_train.prepare()
+# dataset_train = FIDataset()
+# dataset_train.load_FI(category='train')
+# dataset_train.prepare()
 
 # Validation dataset
 dataset_val = FIDataset()
