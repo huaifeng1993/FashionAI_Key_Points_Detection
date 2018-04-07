@@ -88,6 +88,7 @@ class FITestDataset(utils.Dataset):
         annotations = pd.read_csv('./data/test/test.csv')
         annotations = annotations.loc[annotations['image_category'] == fi_class_names[0]]
 
+        annotations = annotations.reset_index(drop=True)  # 更新索引
 
         for x in range(annotations.shape[0]):
             # bg_color, shapes = self.random_image(height, width)
