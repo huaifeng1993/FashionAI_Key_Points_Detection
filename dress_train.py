@@ -19,18 +19,31 @@ from PIL import Image
 ROOT_DIR = os.getcwd()
 
 # Directory to save logs and trained model
-MODEL_DIR = os.path.join(ROOT_DIR, "blouse_logs")
+MODEL_DIR = os.path.join(ROOT_DIR, "outwear_logs")
 
 # Local path to trained weights file
-COCO_MODEL_PATH = os.path.join(ROOT_DIR, "blouse_logs/mask_rcnn_fi_0087.h5")
+COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
 
-'''添加fashion ai'''
+'''
+添加fashion ai
+5类衣服的所有点
+'''
+'''
 fi_class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_left',
                    'shoulder_right', 'armpit_left', 'armpit_right', 'waistline_left',
                    'waistline_right', 'cuff_left_in', 'cuff_left_out', 'cuff_right_in',
                    'cuff_right_out', 'top_hem_left', 'top_hem_right', 'waistband_left',
                    'waistband_right', 'hemline_left', 'hemline_right', 'crotch',
                    'bottom_left_in', 'bottom_left_out', 'bottom_right_in', 'bottom_right_out']
+'''
+
+fi_class_names_=['neckline_left', 'neckline_right', 'center_front', 'shoulder_left',
+                'shoulder_right', 'armpit_left', 'armpit_right','cuff_left_in',
+                'cuff_left_out', 'cuff_right_in','cuff_right_out', 'top_hem_left',
+                'top_hem_right']  #blouse num_points=13
+'''
+fi_class_names_=['waistband_left','waistband_right', 'hemline_left', 'hemline_right',]#skirt NUM_POINTS=4
+'''
 fi_class_names = ['blouse']
 
 
@@ -45,15 +58,15 @@ class FIConfig(Config):
     # Train on 1 GPU and 8 images per GPU. We can put multiple images on each
     # GPU because the images are small. Batch size is 8 (GPUs * images/GPU).
     GPU_COUNT = 1
-    IMAGES_PER_GPU = 2
-    NUM_KEYPOINTS = 24
+    IMAGES_PER_GPU = 1
+    NUM_KEYPOINTS =13
     KEYPOINT_MASK_SHAPE = [56, 56]
     # Number of classes (including background)
     NUM_CLASSES = 1 + 1  # background + 24 key_point
 
     RPN_TRAIN_ANCHORS_PER_IMAGE = 150
     VALIDATION_STPES = 100
-    STEPS_PER_EPOCH = 500
+    STEPS_PER_EPOCH = 1000
     MINI_MASK_SHAPE = (56, 56)
     KEYPOINT_MASK_POOL_SIZE = 7
             # Pooled ROIs
@@ -98,7 +111,11 @@ class FIDataset(utils.Dataset):
         annotations = pd.read_csv('./data/train/Annotations/annotations.csv')
         annotations = annotations.append(pd.read_csv('./data/train/Annotations/train.csv'), ignore_index=True)
         annotations = annotations.loc[annotations['image_category'] == fi_class_names[0]]
-        #annotations = annotations.reset_index(drop=True)  # 更新索引
+        print(annotations.head())
+        print(annotations.tail())
+        print(annotations.shape)
+        annotations = annotations.reset_index(drop=True)  # 更新索引
+        print(annotations.tail())
         # 切分test数据集和train数据集
         np.random.seed(42)
         shuffled_indces = np.random.permutation(annotations.shape[0])
@@ -164,11 +181,11 @@ class FIDataset(utils.Dataset):
         """
         info = self.image_info[image_id]
         key_points = np.array(info['key_points'])
-        clothing_nums = int(len(key_points) / 24)
+        clothing_nums = int(len(key_points) /config.NUM_KEYPOINTS)
 
-        m = np.zeros([clothing_nums, info['height'], info['width'], 24])  # 生成24个mask,因为有24个关键点。
+        m = np.zeros([clothing_nums, info['height'], info['width'], config.NUM_KEYPOINTS])  # 生成24个mask,因为有24个关键点。
 
-        class_mask = np.zeros([clothing_nums, 24])  # 点存在的状态经过处理有三种状态 不存在为0  1为不可见.2 为可见 三分类
+        class_mask = np.zeros([clothing_nums, config.NUM_KEYPOINTS])  # 点存在的状态经过处理有三种状态 不存在为0  1为不可见.2 为可见 三分类
         class_ids = []
 
         for clothing_num in range(clothing_nums):
@@ -194,7 +211,7 @@ class FIDataset(utils.Dataset):
         info = self.image_info[image_id]
         image_category=info['image_category']
         key_points = np.array(info['key_points'])
-        clothing_nums = int(len(key_points) / 24)
+        clothing_nums = int(len(key_points) / config.NUM_KEYPOINTS)
         keypoints = []
         keypoint = []
         class_ids = []
@@ -252,11 +269,23 @@ if __name__== '__main__':
         # Load the last model you trained and continue training
         model.load_weights(model.find_last()[1], by_name=True)
     # Training - Stage 1
-    print("Train heads")
+#    print("Train heads")
+#    model.train(dataset_train, dataset_val,
+#            learning_rate=config.LEARNING_RATE,
+#            epochs=200,
+#            layers='heads')
+#    
+#    print("Train heads")
+#    model.train(dataset_train, dataset_val,
+#            learning_rate=config.LEARNING_RATE/10,
+#            epochs=400,
+#            layers='heads')
+    
+    print("Train 4+")
     model.train(dataset_train, dataset_val,
-            learning_rate=config.LEARNING_RATE,
-            epochs=100,
-            layers='heads')
+            learning_rate=config.LEARNING_RATE/10,
+            epochs=200,
+            layers='4+')
     # Training - Stage 2
     # Finetune layers from ResNet stage 4 and up
     '''

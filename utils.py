@@ -587,34 +587,42 @@ def get_keypoints():
     """Get the COCO keypoints and their left/right flip coorespondence map."""
     # Keypoints are not available in the COCO json for the test split, so we
     # provide them here.
-    keypoints = [
-        'nose',
-        'left_eye',
-        'right_eye',
-        'left_ear',
-        'right_ear',
-        'left_shoulder',
-        'right_shoulder',
-        'left_elbow',
-        'right_elbow',
-        'left_wrist',
-        'right_wrist',
-        'left_hip',
-        'right_hip',
-        'left_knee',
-        'right_knee',
-        'left_ankle',
-        'right_ankle'
-    ]
+    keypoints =  ['neckline_left',
+                  'neckline_right',
+                  'center_front',
+                  'shoulder_left',
+                  'shoulder_right',
+                  'armpit_left',
+                  'armpit_right',
+                  'waistline_left',
+                  'waistline_right',
+                  'cuff_left_in',
+                  'cuff_left_out',
+                  'cuff_right_in',
+                  'cuff_right_out',
+                  'top_hem_left',
+                  'top_hem_right',
+                  'waistband_left',
+                  'waistband_right',
+                  'hemline_left',
+                  'hemline_right',
+                  'crotch',
+                  'bottom_left_in',
+                  'bottom_left_out',
+                  'bottom_right_in',
+                  'bottom_right_out']
     keypoint_flip_map = {
-        'left_eye': 'right_eye',
-        'left_ear': 'right_ear',
-        'left_shoulder': 'right_shoulder',
-        'left_elbow': 'right_elbow',
-        'left_wrist': 'right_wrist',
-        'left_hip': 'right_hip',
-        'left_knee': 'right_knee',
-        'left_ankle': 'right_ankle'
+        'neckline_left': 'neckline_right',
+        'shoulder_left': 'shoulder_right',
+        'armpit_left': 'armpit_right',
+        'waistline_left': 'waistline_right',
+        'cuff_left_in': 'cuff_left_out',
+        'cuff_right_in': 'cuff_right_out',
+        'top_hem_left': 'top_hem_right',
+        'waistband_left': 'waistband_right',
+        'hemline_left':'hemline_right',
+        'bottom_left_in':'bottom_left_out',
+        'bottom_right_in':'bottom_right_out'
     }
     return keypoints, keypoint_flip_map
 def flip_keypoints(keypoints, keypoint_flip_map, keypoint_coords, width):

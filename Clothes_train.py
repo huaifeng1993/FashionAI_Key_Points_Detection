@@ -22,7 +22,7 @@ ROOT_DIR = os.getcwd()
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 
 # Local path to trained weights file
-COCO_MODEL_PATH = os.path.join(ROOT_DIR, "logs/mask_rcnn_coco.h5")
+COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
 
 '''添加fashion ai'''
 fi_class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_left',
@@ -31,7 +31,7 @@ fi_class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_
                    'cuff_right_out', 'top_hem_left', 'top_hem_right', 'waistband_left',
                    'waistband_right', 'hemline_left', 'hemline_right', 'crotch',
                    'bottom_left_in', 'bottom_left_out', 'bottom_right_in', 'bottom_right_out']
-fi_class_names = ['blouse','dress','outwear','skirt','trousers']
+fi_class_names = ['blouse','dress','outwear','skirt']
 
 
 class FIConfig(Config):
@@ -46,7 +46,7 @@ class FIConfig(Config):
     # GPU because the images are small. Batch size is 8 (GPUs * images/GPU).
     GPU_COUNT = 1
     IMAGES_PER_GPU = 2
-    NUM_KEYPOINTS = 24
+    NUM_KEYPOINTS = 4
     KEYPOINT_MASK_SHAPE = [56, 56]
     # Number of classes (including background)
     NUM_CLASSES = 1 + 5  # background + 24 key_point
