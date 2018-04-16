@@ -76,7 +76,7 @@ class FIConfig(Config):
     # GPU because the images are small. Batch size is 8 (GPUs * images/GPU).
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
-    NUM_KEYPOINTS =15
+    NUM_KEYPOINTS =len(all_index[fi_class_names[0]])
     KEYPOINT_MASK_SHAPE = [56, 56]
     # Number of classes (including background)
     NUM_CLASSES = 1 + 1  # background + 24 key_point
