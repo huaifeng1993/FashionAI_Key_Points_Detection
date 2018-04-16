@@ -4,8 +4,8 @@ import numpy as np
 因为分开训练了5个模型，所以用这个代码把单个模型产生的结果合并一下
 '''
 
-PART_IMAGE_CATEGORY='outwear'                      #类别
-RESUTL_PART_PATH='./data/test/outwear_result0413_1.csv'  #单类结果
+PART_IMAGE_CATEGORY='skirt'                      #类别
+RESUTL_PART_PATH='./data/test/skirt_result0415_1.csv'  #单类结果
 RESULT_ALL_PATH='./data/test/test.csv'    #所有类别的结果
 
 result_part=pd.read_csv(RESUTL_PART_PATH)

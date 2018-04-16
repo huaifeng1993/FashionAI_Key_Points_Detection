@@ -20,18 +20,35 @@ ROOT_DIR = os.getcwd()
 
 # Directory to save logs and trained model
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
-model_path = os.path.join(ROOT_DIR, "blouse_logs/tf0406/mask_rcnn_fi_0259.h5")
-result_save_path='./data/test/blouse_result.csv'
+model_path = os.path.join(ROOT_DIR, "dress_logs/180416_1/mask_rcnn_fi_0070.h5")
+result_save_path='./data/test/dress_result0416_1.csv'
 
 #piont names and class name
 '''添加fashion ai'''
-fi_class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_left',
+fi_class_names = ['dress']
+class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_left',
                    'shoulder_right', 'armpit_left', 'armpit_right', 'waistline_left',
                    'waistline_right', 'cuff_left_in', 'cuff_left_out', 'cuff_right_in',
                    'cuff_right_out', 'top_hem_left', 'top_hem_right', 'waistband_left',
                    'waistband_right', 'hemline_left', 'hemline_right', 'crotch',
                    'bottom_left_in', 'bottom_left_out', 'bottom_right_in', 'bottom_right_out']
-fi_class_names = ['blouse']
+blouse_index=[0,1,2,3,4,5,6,9,10,11,12,13,14]#NUM_KEYPOINTS=13
+skirt_index=[15,16,17,18]#NUM_KEYPOINTS=4
+outwear_index=[0,1,3,4,5,6,7,8,9,10,11,12,13,14]#NUM_KEYPOINTS=14
+dress_index=[0,1,2,3,4,5,6,7,8,9,10,11,12,17,18]#NUM_KEYPOINTS=15
+trousers_index=[15,16,19,20,21,22,23]#NUM_KEYPOINTS=7
+all_index={'blouse':blouse_index,
+           'skirt':skirt_index,
+           'outwear':outwear_index,
+           'dress':dress_index,
+           'trousers':trousers_index}
+index = all_index[fi_class_names[0]]
+
+fi_class_names_=[]
+for i in index:
+    fi_class_names_.append(class_names_[i])
+print(fi_class_names_)
+
 #############################################
 #
 #############################################
@@ -54,7 +71,7 @@ class InferenceConfig(Config):
     # GPU because the images are small. Batch size is 8 (GPUs * images/GPU).
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
-    NUM_KEYPOINTS = 24
+    NUM_KEYPOINTS = 15
     KEYPOINT_MASK_SHAPE = [56, 56]
     # Number of classes (including background)
     NUM_CLASSES = 1 + 1 # background + 24 key_point
@@ -113,92 +130,13 @@ class FITestDataset(utils.Dataset):
         image = Image.open(info['path'])
         image = np.array(image)
         return image
-############################滤点###################################
-
-def key_point_disappear(keypoint_list,box,class_name):
-  keypoints = list()
-  boxes = list()
-  if(class_name=='blouse'):
-    if (keypoint_list.shape[0] != 1):
-      a = np.where(box[:, 0] == np.min(box[:, 0]))
-      index = int(a[0])
-      keypoint = blouse_keypoint(keypoint_list[index])
-      box = box[index]
-    else:
-      keypoint = blouse_keypoint(keypoint_list[0])
-      box = box[0]
-  elif (class_name=='dress'):
-    if (keypoint_list.shape[0] != 1):
-      a = np.where(box[:, 0] == np.min(box[:, 0]))
-      index = int(a[0])
-      keypoint = dress_keypoint(keypoint_list[index])
-      box = box[index]
-    else:
-      keypoint = dress_keypoint(keypoint_list[0])
-      box = box[0]
-  elif (class_name == 'skirt'):
-    if (keypoint_list.shape[0] != 1):
-      a = np.where(box[:, 0] == np.max(box[:, 0]))
-      index = int(a[0])
-      keypoint = skirt_keypoint(keypoint_list[index])
-      box = box[index]
-    else:
-      keypoint = skirt_keypoint(keypoint_list[0])
-      box = box[0]
-  elif (class_name=='outwear'):
-    if (keypoint_list.shape[0] != 1):
-      a = np.where(box[:, 0] == np.min(box[:, 0]))
-      index = int(a[0])
-      keypoint = outwear_keypoint(keypoint_list[index])
-      box = box[index]
-    else:
-      keypoint = outwear_keypoint(keypoint_list[0])
-      box = box[0]
-  elif (class_name=='trousers'):
-    if (keypoint_list.shape[0] != 1):
-      a = np.where(box[:, 0] == np.max(box[:, 0]))
-      index = int(a[0])
-      keypoint = trousers_keypoint(keypoint_list[index])
-      box = box[index]
-    else:
-      keypoint = trousers_keypoint(keypoint_list[0])
-      box = box[0]
-  keypoints.append(keypoint)
-  boxes.append(box)
-  return np.array(keypoints,dtype= np.int32),np.array(boxes,dtype= np.int32)
-
-def blouse_keypoint(keypoint):
-  keypoint[7:9,2]=0
-  keypoint[15:,2]=0
-  return keypoint
-
-def dress_keypoint(keypoint):
-  keypoint[13:17, 2] = 0
-  keypoint[19:,2] = 0
-  return keypoint
-
-def skirt_keypoint(keypoint):
-  keypoint[:15,2] = 0
-  keypoint[19:,2] = 0
-  return keypoint
-
-def outwear_keypoint(keypoint):
-  keypoint[2, 2] = 0
-  keypoint[15:, 2] = 0
-  return keypoint
-
-def trousers_keypoint(keypoint):
-  keypoint[:15, 2] = 0
-  keypoint[17:19,2] = 0
-  return keypoint
-
-
+###############################################################
 '''
 把int类型转为num_num_num格式以便提交
 '''
 def keypoint_to_str(keypoint):
-    keypoint = keypoint.reshape([24, 3])
-    for x in range(24):
+    keypoint = keypoint.reshape([len(class_names_), 3])
+    for x in range(len(fi_class_names_)):
         if keypoint[x][2] != 1:
             keypoint[x] = [-1, -1, -1]
     list_keypoint = []
@@ -206,6 +144,17 @@ def keypoint_to_str(keypoint):
         list_keypoint.append(str(x[0]) + '_' + str(x[1]) + '_' + str(x[2]))
     return list_keypoint
 #######################################################################
+#把得到的结果映射到24个点中。
+#######################################################################
+def keypoint_map_to24(points,img_category):
+    x=[[-1,-1,-1] for i in range(24)]
+    for point_index,x_index in enumerate(all_index[img_category]):
+        #print(point_str_index)
+        x[x_index]=points[point_index]
+    return np.array(x)
+
+
+
 if __name__ =='__main__':
     dataset_test=FITestDataset()
     dataset_test.load_FI_test()
@@ -239,21 +188,20 @@ if __name__ =='__main__':
         results = model.detect_keypoint([image], verbose=0)
 
         r = results[0]  # for one image
-        # log("image", image)
-        # log("rois", r['rois'])
-        # log("keypoints", r['keypoints'])
-        # log("class_ids", r['class_ids'])
-        # log("keypoints", r['keypoints'])
+        log("image", image)
+        log("rois", r['rois'])
+        log("keypoints", r['keypoints'])
+        log("class_ids", r['class_ids'])
+        log("keypoints", r['keypoints'])
 
-        keypoint, box = key_point_disappear(r['keypoints'], r['rois'], category)
+        visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
+        key_points = keypoint_map_to24(r['keypoints'][0], fi_class_names[0])
+        point_str=keypoint_to_str(key_points)#需要修改
 
 
-        #visualize.display_keypoints(image,box,keypoint, r['class_ids'], dataset_test.class_names)
-
-        point_str=keypoint_to_str(keypoint)
         relust_info=[image_id,category]
-        relust_info.extend(point_str)
 
+        relust_info.extend(point_str)
         point_to_csv_list.append(relust_info)
         print(x,r'/',dataset_test.num_images)
 
@@ -261,7 +209,7 @@ if __name__ =='__main__':
     保存结果
     '''
     columns=['image_id','image_category']#设置columns
-    columns.extend(fi_class_names_)      #
+    columns.extend(class_names_)      #
 
     point_to_csv=pd.DataFrame(data=np.array(point_to_csv_list).reshape([-1,26]),
                               columns=columns)
