@@ -20,12 +20,12 @@ ROOT_DIR = os.getcwd()
 
 #piont names and class name
 '''添加fashion ai'''
-fi_class_names = ['dress']
+fi_class_names = ['trousers']
 
 # Directory to save logs and trained model
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
-model_path = os.path.join(ROOT_DIR, "dress_logs/180416_1/mask_rcnn_fi_0070.h5")
-result_save_path='./data/test/dress_result0416_1.csv'
+model_path = os.path.join(ROOT_DIR, "trousers_logs/180418/mask_rcnn_fi_0100.h5")
+result_save_path='./data/test/trousers_result0418_2.csv'
 #result_save_path=('./data/test/{0}_result.csv'.format(fi_class_names[0]))
 
 
@@ -144,7 +144,7 @@ class FITestDataset(utils.Dataset):
 '''
 def keypoint_to_str(keypoint):
     keypoint = keypoint.reshape([len(class_names_), 3])
-    for x in range(len(fi_class_names_)):
+    for x in range(len(class_names_)):
         if keypoint[x][2] != 1:
             keypoint[x] = [-1, -1, -1]
     list_keypoint = []
@@ -198,19 +198,19 @@ if __name__ =='__main__':
         results = model.detect_keypoint([image], verbose=0)
 
         r = results[0]  # for one image
-        log("image", image)
-        log("rois", r['rois'])
-        log("keypoints", r['keypoints'])
-        log("class_ids", r['class_ids'])
-        log("keypoints", r['keypoints'])
+        # log("image", image)
+        # log("rois", r['rois'])
+        # log("keypoints", r['keypoints'])
+        # log("class_ids", r['class_ids'])
+        # log("keypoints", r['keypoints'])
         error_count=0
         try:#统计未检测出目标的图片
             key_points = keypoint_map_to24(r['keypoints'][0], fi_class_names[0])
         except:
-            key_points =[[[0,0,0] for i in range(24)]]
+            key_points =np.array([[[0,0,0] for i in range(24)]])
             error_count+=1
 
-        visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
+        #visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
 
         point_str=keypoint_to_str(key_points)#把坐标转为字符
         print(point_str)

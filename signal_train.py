@@ -27,7 +27,7 @@ from PIL import Image
 ROOT_DIR = os.getcwd()
 
 # Directory to save logs and trained model
-MODEL_DIR = os.path.join(ROOT_DIR, "dress_logs")
+MODEL_DIR = os.path.join(ROOT_DIR, "trousers_logs")
 
 # Local path to trained weights file
 COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
@@ -36,7 +36,7 @@ COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
 添加fashion ai
 5类衣服的所有点
 '''
-fi_class_names = ['dress']
+fi_class_names = ['trousers']
 class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_left',
                    'shoulder_right', 'armpit_left', 'armpit_right', 'waistline_left',
                    'waistline_right', 'cuff_left_in', 'cuff_left_out', 'cuff_right_in',
@@ -285,19 +285,19 @@ if __name__== '__main__':
     print("Train heads")
     model.train(dataset_train, dataset_val,
            learning_rate=config.LEARNING_RATE,
-           epochs=250,
+           epochs=200,
            layers='heads')
 
     print("Train heads")
     model.train(dataset_train, dataset_val,
            learning_rate=config.LEARNING_RATE/10,
-           epochs=450,
+           epochs=400,
            layers='heads')
     
     print("Train 4+")
     model.train(dataset_train, dataset_val,
             learning_rate=config.LEARNING_RATE/10,
-            epochs=650,
+            epochs=600,
             layers='4+')
     # Training - Stage 2
     # Finetune layers from ResNet stage 4 and up
