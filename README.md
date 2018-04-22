@@ -50,7 +50,7 @@ project
 |--submit
     |--test.csv
 |--model
-    |--mask_rcnn_类别.h5
+    |--mask_rcnn_类别.h5  
 
 ## 5.模型下载
     地址：https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ
