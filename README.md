@@ -1,13 +1,14 @@
 # Mask RCNN for FashionAI key point location
 -----------------------------------
 从入学以来接触深度学习大约有半年时间，偶然得知天池大数据竞赛，便想尝试一下看看自己能做到什么程度，从三月初报名，
-然后找论文，找代码写代码，优化，一个人做了有一个月左右后来又拉来一个同学一起做，进度快多了。最终排名110 最终得分13.18%基本无缘复赛。本次采用maskrcnn
+然后找论文，找代码写代码，优化，一个人做了有一个月左右后来又拉来一个同学一起做。最终排名110 最终得分13.18%基本无缘复赛。本次采用maskrcnn
 进行点的预测，部分结果如下：
-![blouse](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/blouse.jpg)
-![dress](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/dress.jpg)
-![outwear](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/outwear.jpg)
-![skirt](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/skirt.jpg)
-![trousers](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/trousers.jpg)
+<img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/blouse.jpg" width="300" height="200" alt="blouse" align=center />
+
+<img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/dress.jpg" width="300" height="200" alt="dress" align=center />
+<img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/outwear.jpg" width="300" height="200" alt="outwear" align=center />
+<img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/skirt.jpg" width="300" height="200" alt="skirt" align=center />
+<img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/trousers.jpg" width="300" height="200" alt="trousers" align=center />
 ![b_final_reslut](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/b_final_result.png)
 ## 1.环境要求：
     Python 3.4/3.5
@@ -61,18 +62,19 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
   |--model<br>
   &ensp;&ensp;|--mask_rcnn_类别.h5<br>
   |--logs<br>
-  ### 4.1文件目录说明
-    * data文件夹两个阿里巴巴提供的训练集我加压在统一的文件目录中。
-    * code 存放代码的文件夹
-    * data_b 存放b榜测试文件
-    * submit 存放最终的结果(csv)文件
-    * logs 存放训练记录和模型
+### 4.1文件目录说明
+* data文件夹两个阿里巴巴提供的训练集我加压在统一的文件目录中。
+* code 存放代码的文件夹。
+* data_b 存放b榜测试文件。
+* submit 存放最终的结果(csv)文件。
+* logs 存放训练记录和模型。
 
 ## 5.模型下载
   地址i:[百度云下载](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ)把模型下载放在model文件夹下。
 
 ## 感谢
-  非常感谢@Superlee506 [Mask_RCNN_Humanpose](https://github.com/Superlee506/Mask_RCNN_Humanpose)
-  @matterport [Mask_RCNN](https://github.com/matterport/Mask_RCNN)
-  @RodrigoGantier [Mask_R_CNN_Keypoints](https://github.com/RodrigoGantier/Mask_R_CNN_Keypoints)  的maskrcnn代码。本人我的工作基于上述三人所贡献的
-代码展开。收益匪浅，膜拜大佬。
+  非常感谢  
+  @Superlee506 [Mask_RCNN_Humanpose](https://github.com/Superlee506/Mask_RCNN_Humanpose)  
+  @matterport [Mask_RCNN](https://github.com/matterport/Mask_RCNN)  
+  @RodrigoGantier [Mask_R_CNN_Keypoints](https://github.com/RodrigoGantier/Mask_R_CNN_Keypoints)  
+的maskrcnn代码。本人我的工作基于上述三人所贡献的代码展开。受益匪浅，膜拜大佬。
