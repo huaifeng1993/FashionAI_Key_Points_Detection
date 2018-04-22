@@ -3,12 +3,12 @@
 从入学以来接触深度学习大约有半年时间，偶然得知天池大数据竞赛，便想尝试一下看看自己能做到什么程度，从三月初报名，
 然后找论文，找代码写代码，优化，一个人做了有一个月左右后来又拉来一个同学一起做，进度快多了。最终排名110 最终得分13.18%基本无缘复赛。本次采用maskrcnn
 进行点的预测，部分结果如下：
-<center>![blouse](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/blouse.jpg)</center>
-<center>![dress](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/dress.jpg)</center>
-<center>![outwear](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/outwear.jpg)</center>
-<center>![skirt](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/skirt.jpg)</center>
-<center>![trousers](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/trousers.jpg)</center>
-<center>![b_final_reslut](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/b_final_result.png)</center>
+<center> ![blouse](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/blouse.jpg) </center>
+<center> ![dress](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/dress.jpg) </center>
+<center> ![outwear](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/outwear.jpg) </center>
+<center> ![skirt](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/skirt.jpg) </center>
+<center> ![trousers](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/trousers.jpg) </center>
+<center> ![b_final_reslut](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/b_final_result.png) </center>
 ## 1.环境要求：
     Python 3.4/3.5
     numpy
@@ -75,5 +75,5 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
 ## 感谢
     非常感谢@Superlee506 [Mask_RCNN_Humanpose](https://github.com/Superlee506/Mask_RCNN_Humanpose)
      @matterport [Mask_RCNN](https://github.com/matterport/Mask_RCNN)
-     @RodrigoGantier [Mask_R_CNN_Keypoints](https://github.com/RodrigoGantier/Mask_R_CNN_Keypoints)的maskrcnn代码。本人我的工作基于上述三人所贡献的代码展开。
+     @RodrigoGantier [Mask_R_CNN_Keypoints](https://github.com/RodrigoGantier/Mask_R_CNN_Keypoints)  的maskrcnn代码。本人我的工作基于上述三人所贡献的代码展开。
  收益匪浅，膜拜大佬。
