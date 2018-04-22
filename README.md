@@ -3,12 +3,12 @@
 从入学以来接触深度学习大约有半年时间，偶然得知天池大数据竞赛，便想尝试一下看看自己能做到什么程度，从三月初报名，
 然后找论文，找代码写代码，优化，一个人做了有一个月左右后来又拉来一个同学一起做，进度快多了。最终排名110 最终得分13.18%基本无缘复赛。本次采用maskrcnn
 进行点的预测，部分结果如下：
-<center> ![blouse](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/blouse.jpg) </center>
-<center> ![dress](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/dress.jpg) </center>
-<center> ![outwear](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/outwear.jpg) </center>
-<center> ![skirt](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/skirt.jpg) </center>
-<center> ![trousers](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/trousers.jpg) </center>
-<center> ![b_final_reslut](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/b_final_result.png) </center>
+![blouse](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/blouse.jpg)
+![dress](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/dress.jpg)
+![outwear](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/outwear.jpg)
+![skirt](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/skirt.jpg)
+![trousers](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/trousers.jpg)
+![b_final_reslut](https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/b_final_result.png)
 ## 1.环境要求：
     Python 3.4/3.5
     numpy
