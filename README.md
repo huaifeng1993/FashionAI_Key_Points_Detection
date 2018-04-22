@@ -40,7 +40,7 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
   project<br>
   |--README.md<br>
   |--data<br>
-      |--test<br>
+  &ensp;&ensp;|--test<br>
       |--train<br>
   |--code<br>
   |--data_b<br>
