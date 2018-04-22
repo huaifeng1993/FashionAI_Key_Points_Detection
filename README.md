@@ -1,4 +1,4 @@
-#Mask RCNN for FashionAI key point location
+# Mask RCNN for FashionAI key point location
 -----------------------------------
 ## 1.环境要求：
     Python 3.4/3.5
@@ -53,5 +53,5 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
   &ensp;&ensp;|--mask_rcnn_类别.h5<br>
 
 ## 5.模型下载
-    地址：https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ
+    地址：[百度云下载](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ)
     把模型下载放在model文件夹下。
