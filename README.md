@@ -36,9 +36,9 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
         .
         # visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
 
-## 4.代码文件夹结构  
+## 4.代码文件夹结构
   project
-  |--README.md
+  |--README.md<br>
   |--data
       |--test
       |--train
