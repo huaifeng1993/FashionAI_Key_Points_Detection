@@ -37,20 +37,20 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
         # visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
 
 ## 4.代码文件夹结构
-  project
+  project<br>
   |--README.md<br>
-  |--data
-      |--test
-      |--train
-  |--code
-  |--data_b
-      |--Images
-      |--tem_result
-          |--类别_result.csv
-  |--submit
-      |--test.csv
-  |--model
-      |--mask_rcnn_类别.h5
+  |--data<br>
+      |--test<br>
+      |--train<br>
+  |--code<br>
+  |--data_b<br>
+      |--Images<br>
+      |--tem_result<br>
+          |--类别_result.csv<br>
+  |--submit<br>
+      |--test.csv<br>
+  |--model<br>
+      |--mask_rcnn_类别.h5<br>
 
 ## 5.模型下载
     地址：https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ
