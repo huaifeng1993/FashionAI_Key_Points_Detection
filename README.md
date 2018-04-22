@@ -1,7 +1,7 @@
 # Mask RCNN for FashionAI key point location
 -----------------------------------
 从入学以来接触深度学习大约有半年时间，偶然得知天池大数据竞赛，便想尝试一下看看自己能做到什么程度，从三月初报名，
-然后找论文，找代码写代码，优化，一个人做了有一个月左右后来又拉来一个同学一起做。最终排名110 最终得分13.18%基本无缘复赛。本次采用maskrcnn
+然后找论文，找代码写代码，优化，一个人做了有一个月左右后来又拉来一个伙伴一起做。最终排名110 最终得分13.18%基本无缘复赛。本次采用maskrcnn
 进行点的预测，部分结果如下：  
 <img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/blouse.jpg" width="300" height="300" alt="blouse" align=center /><img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/dress.jpg" width="300" height="300" alt="dress" align=center />
 <img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/outwear.jpg" width="300" height="300" alt="outwear" align=center /><img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/skirt.jpg" width="300" height="300" alt="skirt" align=center />
