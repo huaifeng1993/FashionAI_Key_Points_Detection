@@ -41,16 +41,16 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
   |--README.md<br>
   |--data<br>
   &ensp;&ensp;|--test<br>
-      |--train<br>
+  &ensp;&ensp;|--train<br>
   |--code<br>
   |--data_b<br>
-      |--Images<br>
-      |--tem_result<br>
-          |--类别_result.csv<br>
+  &ensp;&ensp;|--Images<br>
+  &ensp;&ensp;|--tem_result<br>
+  &ensp;&ensp;&ensp;&ensp;|--类别_result.csv<br>
   |--submit<br>
-      |--test.csv<br>
+  &ensp;&ensp;|--test.csv<br>
   |--model<br>
-      |--mask_rcnn_类别.h5<br>
+  &ensp;&ensp;|--mask_rcnn_类别.h5<br>
 
 ## 5.模型下载
     地址：https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ
