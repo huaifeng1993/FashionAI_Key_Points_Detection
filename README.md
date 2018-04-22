@@ -1,5 +1,9 @@
 # Mask RCNN for FashionAI key point location
 -----------------------------------
+从入学以来接触深度学习大约有半年时间，偶然得知天池大数据竞赛，便想尝试一下看看自己能做到什么程度，从三月初报名，
+然后找论文，找代码写代码，优化，一个人做了有一个月左右后来又拉来一个同学一起做，进度快多了。最终排名110 最终得分13.18%基本无缘复赛。本次采用maskrcnn
+进行点的预测。预测结果如下：
+![blouse](./image/blouse.jpg)
 ## 1.环境要求：
     Python 3.4/3.5
     numpy
@@ -52,6 +56,12 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
   |--model<br>
   &ensp;&ensp;|--mask_rcnn_类别.h5<br>
   |--logs<br>
+  ### 4.1文件目录说明
+    * data文件夹两个阿里巴巴提供的训练集我加压在统一的文件目录中。
+    * code 存放代码的文件夹
+    * data_b 存放b榜测试文件
+    * submit 存放最终的结果(csv)文件
+    * logs 存放训练记录和模型
 
 ## 5.模型下载
     地址: [百度云下载](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ).
