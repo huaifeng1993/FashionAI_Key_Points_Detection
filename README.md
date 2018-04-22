@@ -69,11 +69,10 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
     * logs 存放训练记录和模型
 
 ## 5.模型下载
-    地址: [百度云下载](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ).
-    把模型下载放在model文件夹下。
+  地址i:[百度云下载](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ)把模型下载放在model文件夹下。
 
 ## 感谢
-    非常感谢@Superlee506 [Mask_RCNN_Humanpose](https://github.com/Superlee506/Mask_RCNN_Humanpose)
-     @matterport [Mask_RCNN](https://github.com/matterport/Mask_RCNN)
-     @RodrigoGantier [Mask_R_CNN_Keypoints](https://github.com/RodrigoGantier/Mask_R_CNN_Keypoints)  的maskrcnn代码。本人我的工作基于上述三人所贡献的代码展开。
- 收益匪浅，膜拜大佬。
+  非常感谢@Superlee506 [Mask_RCNN_Humanpose](https://github.com/Superlee506/Mask_RCNN_Humanpose)
+  @matterport [Mask_RCNN](https://github.com/matterport/Mask_RCNN)
+  @RodrigoGantier [Mask_R_CNN_Keypoints](https://github.com/RodrigoGantier/Mask_R_CNN_Keypoints)  的maskrcnn代码。本人我的工作基于上述三人所贡献的
+代码展开。收益匪浅，膜拜大佬。
