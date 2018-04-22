@@ -51,9 +51,10 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
   &ensp;&ensp;|--test.csv<br>
   |--model<br>
   &ensp;&ensp;|--mask_rcnn_类别.h5<br>
+  &ensp;&ensp|--logs<br>
 
 ## 5.模型下载
-    地址: [百度云下载](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ)
+    地址: [百度云下载](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ).
     把模型下载放在model文件夹下。
 
 ## 感谢
