@@ -1,4 +1,4 @@
-# Mask RCNN for FashionAI key point location
+# Mask RCNN for FashionAI Key Points Detection
 -----------------------------------
 从入学以来接触深度学习大约有半年时间，偶然得知天池大数据竞赛，便想尝试一下，从三月初报名，
 然后找论文，找代码写代码，优化，一个人做了有一个月左右后来又拉来一个伙伴一起做。最终排名110 最终得分13.18%基本无缘复赛。本次采用maskrcnn
@@ -66,9 +66,9 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
 * submit 存放最终的结果(csv)文件。
 * logs 存放训练记录和模型。
 
-## 5.模型下载
-  地址i:[百度云下载](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ)把模型下载放在model文件夹下。
-
+## 5.下载
+  models:[BaiduCloud](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ)把模型下载放在model文件夹下。
+  dataset:[BaiduCloud](https://pan.baidu.com/s/1mafQ8N9G1PReGpOgLM7LQw) 
 ## 感谢
   非常感谢  
   @Superlee506 [Mask_RCNN_Humanpose](https://github.com/Superlee506/Mask_RCNN_Humanpose)  
