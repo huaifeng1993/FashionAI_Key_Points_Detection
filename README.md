@@ -76,7 +76,7 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
         # visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
 
 
-## 5.下载
+## 7.下载
   models:[BaiduCloud](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ)把模型下载放在model文件夹下。
   dataset:[BaiduCloud](https://pan.baidu.com/s/1mafQ8N9G1PReGpOgLM7LQw) 
 ## 感谢
