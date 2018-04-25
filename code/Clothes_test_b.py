@@ -25,7 +25,7 @@ fi_class_names = ['dress']
 # Directory to save logs and trained model
 MODEL_DIR = os.path.join(ROOT_DIR, "logs/{}_logs".format(fi_class_names[0]))
 model_path = os.path.join(ROOT_DIR, "model/mask_rcnn_{}.h5".format(fi_class_names[0]))
-result_save_path='../submit/{}_result.csv'.format(fi_class_names[0])
+result_save_path='../submit/{}_result_b.csv'.format(fi_class_names[0])
 #result_save_path=('./data/test/{0}_result.csv'.format(fi_class_names[0]))
 
 
