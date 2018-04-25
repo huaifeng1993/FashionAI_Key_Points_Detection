@@ -1,7 +1,7 @@
 # Mask RCNN for FashionAI Key Points Detection
 -----------------------------------
 *author1:huaifeng1993*  
-*author2:sephirothhua*  
+*author2:sephirothhua* 
 ----------------------------------
 
 从入学以来接触深度学习大约有半年时间，偶然得知天池大数据竞赛，便想尝试一下，从三月初报名，
