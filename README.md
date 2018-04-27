@@ -35,7 +35,8 @@ project
         |--Images  
         |--Annotations  
            |--annotation.csv  
-           |--train.csv  
+           |--train.csv 
+		   |--train_a.csv  		   
   |--code  
   |--data_b  
      |--Images  
