@@ -36,6 +36,7 @@ ROOT_DIR = '../'
 fi_class_names = ['blouse']
 # Directory to save logs and trained model
 MODEL_DIR = os.path.join(ROOT_DIR, "logs/{}_logs".format(fi_class_names[0]))
+SELF_MODEL_PATH=os.path.join(ROOT_DIR,"model/mask_rcnn_{}.h5".format(fi_class_names[0]))
 print(MODEL_DIR)
 # Local path to trained weights file
 COCO_MODEL_PATH = os.path.join(ROOT_DIR, "model/mask_rcnn_coco.h5")
@@ -136,6 +137,10 @@ class FIDataset(utils.Dataset):
 
         annotations = pd.read_csv('../data/train/Annotations/annotations.csv')
         annotations = annotations.append(pd.read_csv('../data/train/Annotations/train.csv'), ignore_index=True)
+        annotations = annotations.append(pd.read_csv('../data/train/Annotations/test_a.csv'), ignore_index=True)
+        annotations = annotations.append(pd.read_csv('../data/train/Annotations/test_b.csv'), ignore_index=True)
+        annotations = annotations.append(pd.read_csv('../data/train/Annotations/data_scaling.csv'), ignore_index=True)
+        annotations = annotations.append(pd.read_csv('../data/train/Annotations/data_flip_up_down.csv'), ignore_index=True)
         annotations = annotations.loc[annotations['image_category'] == fi_class_names[0]]
         annotations = annotations.reset_index(drop=True)  # 更新索引
         # 切分test数据集和train数据集
@@ -279,7 +284,7 @@ if __name__== '__main__':
     model = modellib.MaskRCNN(mode='training', config=config, model_dir=MODEL_DIR)
 
     # Which weights to start with?
-    init_with = "coco"  # imagenet, coco, or last
+    init_with = "self_model"  # imagenet, coco, or last
     if init_with == "coco":
         # Load weights trained on MS COCO, but skip layers that
         # are different due to the different number of classes
@@ -290,6 +295,8 @@ if __name__== '__main__':
     elif init_with == "last":
         # Load the last model you trained and continue training
         model.load_weights(model.find_last()[1], by_name=True)
+    elif init_with == "self_mdoel":
+        model.load_weights(SELF_MODEL_PATH, by_name=True)
     # Training - Stage 1
     print("Train heads")
     model.train(dataset_train, dataset_val,

@@ -25,7 +25,7 @@ fi_class_names = ['dress']
 # Directory to save logs and trained model
 MODEL_DIR = os.path.join(ROOT_DIR, "logs/{}_logs".format(fi_class_names[0]))
 model_path = os.path.join(ROOT_DIR, "model/mask_rcnn_{}.h5".format(fi_class_names[0]))
-result_save_path='../submit/{}_result_b.csv'.format(fi_class_names[0])
+result_save_path='../submit/{}_result.csv'.format(fi_class_names[0])
 #result_save_path=('./data/test/{0}_result.csv'.format(fi_class_names[0]))
 
 
@@ -106,11 +106,11 @@ test data set class
 '''
 class FITestDataset(utils.Dataset):
     def load_FI_test(self):
-        test_data_path='../data_b/'
+        test_data_path='../data/train'
         # Add classes
         for i, class_name in enumerate(fi_class_names):
             self.add_class("FI", i + 1, class_name)
-        annotations = pd.read_csv('../data_b/test.csv')
+        annotations = pd.read_csv('../data/test/test.csv')
         annotations = annotations.loc[annotations['image_category'] == fi_class_names[0]]
 
         annotations = annotations.reset_index(drop=True)  # 更新索引
