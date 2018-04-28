@@ -84,6 +84,16 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
 ## 7.下载
   models:[BaiduCloud](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ)把模型下载放在model文件夹下。
   dataset:[BaiduCloud](https://pan.baidu.com/s/1mafQ8N9G1PReGpOgLM7LQw) 
+
+## 8.Update
+####2018.4.27
+  We update two codes to extend our dataset:  
+  
+  *data_flip_up_down.py*:This code is used to generate the upside down images from the original images. It will generate a new folder named "Images_flip" with changed images in folder "data" and a new CSV file named data_flip_up_down.csv with new labels in folder "data/Annotations"";  
+  
+  *data_scaling.py*:This code is used to generate the images in a resized size about 0.5-0.75 from the original images. It will generate a new folder named "Images_scaling" with changed images in folder "data" and a new CSV file named data_scaling.csv with new labels in folder "data/Annotations"";  
+  
+  Append the new CSV files in *load_FI_test* in *signal_train.py* if you want to use the new data.
 ## 感谢
   非常感谢  
   @Superlee506 [Mask_RCNN_Humanpose](https://github.com/Superlee506/Mask_RCNN_Humanpose)  
