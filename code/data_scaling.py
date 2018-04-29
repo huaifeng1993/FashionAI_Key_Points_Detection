@@ -74,14 +74,15 @@ for x in range(annotations.shape[0]):
             key_points[i][1] *= re_size
             key_points[i][0] = int(key_points[i][0])
             key_points[i][1] = int(key_points[i][1])
-            cv2.rectangle(img=img,pt1 = (key_points[i][0]-2,key_points[i][1]-2),pt2=(key_points[i][0]+2,key_points[i][1]+2),thickness= 2,color = (255,0,0))
+            #屏蔽掉，不屏蔽会把点也加在图片中
+            #cv2.rectangle(img=img,pt1 = (key_points[i][0]-2,key_points[i][1]-2),pt2=(key_points[i][0]+2,key_points[i][1]+2),thickness= 2,color = (255,0,0))
     key_points = keypoint_to_str(key_points)
     new_dir = id.replace("Images",save_name)
     relust_info = [new_dir, category] + key_points
     csv_all.append(relust_info)
-    cv2.imshow('11', img)
-    #cv2.imwrite(os.path.join(data_path,new_dir),img)
-    cv2.waitKey(0)
+    #cv2.imshow('11', img)
+    cv2.imwrite(os.path.join(data_path,new_dir),img)
+    #cv2.waitKey(0)
 
 columns=['image_id','image_category']#设置columns
 columns.extend(fi_class_names_)
