@@ -103,6 +103,7 @@ class InferenceConfig(Config):
 
     DETECTION_MAX_INSTANCES = 1
 
+config = InferenceConfig()
 ###############################################################
 class FIDataset(utils.Dataset):
     """Generates the shapes synthetic dataset. The dataset consists of simple
@@ -351,7 +352,7 @@ if __name__ =='__main__':
 
     pre_point_to_csv=pd.DataFrame(data=np.array(pre_point_to_csv_list).reshape([-1,26]),
                               columns=columns)
-    gt_point_to_csv=pd.DataFrame(data=np.array(pre_point_to_csv_list).reshape([-1,26]),
+    gt_point_to_csv=pd.DataFrame(data=np.array(gt_point_to_csv_list).reshape([-1,26]),
                                  columns=columns)
 
     pre_point_to_csv.to_csv(pre_result_save_path,index=False)
