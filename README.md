@@ -5,7 +5,7 @@
 ----------------------------------
 
 从入学以来接触深度学习大约有半年时间，偶然得知天池大数据竞赛，便想尝试一下，从三月初报名，
-然后找论文，找代码写代码，优化。最终排名110 最终得分13.18%基本无缘复赛。本次采用maskrcnn
+然后找论文，找代码写代码，优化。最终排名105略显尴尬，最终得分12.85%可能会进复赛。本次采用maskrcnn
 进行点的预测，部分结果如下：  
 <img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/blouse.jpg" width="300" height="300" alt="blouse" align=center /><img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/dress.jpg" width="300" height="300" alt="dress" align=center />
 <img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/outwear.jpg" width="300" height="300" alt="outwear" align=center /><img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/skirt.jpg" width="300" height="300" alt="skirt" align=center />

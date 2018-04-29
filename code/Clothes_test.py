@@ -16,16 +16,16 @@ from model import log
 from PIL import Image
 
 # Root directory of the project
-ROOT_DIR = os.getcwd()
+ROOT_DIR = '../'
 
 #piont names and class name
 '''添加fashion ai'''
-fi_class_names = ['trousers']
+fi_class_names = ['dress']
 
 # Directory to save logs and trained model
-MODEL_DIR = os.path.join(ROOT_DIR, "logs")
-model_path = os.path.join(ROOT_DIR, "trousers_logs/180418/mask_rcnn_fi_0100.h5")
-result_save_path='./data/test/trousers_result0418_2.csv'
+MODEL_DIR = os.path.join(ROOT_DIR, "logs/{}_logs".format(fi_class_names[0]))
+model_path = os.path.join(ROOT_DIR, "model/mask_rcnn_{}.h5".format(fi_class_names[0]))
+result_save_path='../submit/{}_result.csv'.format(fi_class_names[0])
 #result_save_path=('./data/test/{0}_result.csv'.format(fi_class_names[0]))
 
 
@@ -106,11 +106,11 @@ test data set class
 '''
 class FITestDataset(utils.Dataset):
     def load_FI_test(self):
-        test_data_path='./data/test/'
+        test_data_path='../data/round2test'
         # Add classes
         for i, class_name in enumerate(fi_class_names):
             self.add_class("FI", i + 1, class_name)
-        annotations = pd.read_csv('./data/test/test.csv')
+        annotations = pd.read_csv('../data/round2test/test.csv')
         annotations = annotations.loc[annotations['image_category'] == fi_class_names[0]]
 
         annotations = annotations.reset_index(drop=True)  # 更新索引
@@ -210,7 +210,7 @@ if __name__ =='__main__':
             key_points =np.array([[[0,0,0] for i in range(24)]])
             error_count+=1
 
-        #visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
+        # visualize.display_keypoints(image,r['rois'],r['keypoints'], r['class_ids'], dataset_test.class_names)
 
         point_str=keypoint_to_str(key_points)#把坐标转为字符
         print(point_str)
