@@ -130,32 +130,32 @@ class FIDataset(utils.Dataset):
         count: number of images to generate.
         height, width: the size of the generated images.
         """
-        train_data_path = '../data/train/'
+
+
         # Add classes
         for i, class_name in enumerate(fi_class_names):
             self.add_class("FI", i + 1, class_name)
 
-        annotations = pd.read_csv('../data/train/Annotations/annotations.csv')
-        annotations = annotations.append(pd.read_csv('../data/train/Annotations/train.csv'), ignore_index=True)
-        annotations = annotations.append(pd.read_csv('../data/train/Annotations/test_a.csv'), ignore_index=True)
-        annotations = annotations.append(pd.read_csv('../data/train/Annotations/test_b.csv'), ignore_index=True)
-        annotations = annotations.append(pd.read_csv('../data/train/Annotations/data_scaling.csv'), ignore_index=True)
-        annotations = annotations.append(pd.read_csv('../data/train/Annotations/data_flip_up_down.csv'), ignore_index=True)
+        if category=='train':
+            data_path = '../data/train/'
+            annotations = pd.read_csv('../data/train/Annotations/annotations.csv')
+            annotations = annotations.append(pd.read_csv('../data/train/Annotations/train.csv'), ignore_index=True)
+            annotations = annotations.append(pd.read_csv('../data/train/Annotations/test_a.csv'), ignore_index=True)
+            annotations = annotations.append(pd.read_csv('../data/train/Annotations/data_scaling.csv'), ignore_index=True)
+            annotations = annotations.append(pd.read_csv('../data/train/Annotations/data_flip_up_down.csv'), ignore_index=True)
+
+        elif category=='val':
+            data_path = '../data/val/'
+            annotations = pd.read_csv('../data/val/test_b.csv')
+        else:
+            pass
+        # 切分test数据集和train数据集
         annotations = annotations.loc[annotations['image_category'] == fi_class_names[0]]
         annotations = annotations.reset_index(drop=True)  # 更新索引
-        # 切分test数据集和train数据集
+
         np.random.seed(42)
-        shuffled_indces = np.random.permutation(annotations.shape[0])
-        val_set_size = int(annotations.shape[0] * 0.05)
-        val_indices = shuffled_indces[:val_set_size]
-        train_indices = shuffled_indces[val_set_size:]
-        if category == 'train':
-            annotations = annotations.iloc[train_indices]
-        elif category == 'val':
-            annotations = annotations.iloc[val_indices]
-        else:
-            # test 数据集
-            pass
+        indices = np.random.permutation(annotations.shape[0])
+        annotations = annotations.iloc[indices]
         # Add images
         # Generate random specifications of images (i.e. color and
         # list of shapes sizes and locations). This is more compact than
@@ -168,7 +168,7 @@ class FIDataset(utils.Dataset):
             id = annotations.loc[x, 'image_id']
             category = annotations.loc[x, 'image_category']
             print('loading image:%d/%d'%(x,annotations.shape[0]))
-            im_path = os.path.join(train_data_path, id)
+            im_path = os.path.join(data_path, id)
 
             # height, width = cv2.imread(im_path).shape[0:2]
             width, height = pic_height_width(im_path)

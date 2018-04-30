@@ -18,7 +18,6 @@ fi_class_names_ = ['neckline_left', 'neckline_right', 'center_front', 'shoulder_
                    'bottom_left_in', 'bottom_left_out', 'bottom_right_in', 'bottom_right_out']
 
 annotations = pd.read_csv('../data/train/Annotations/test_a.csv')
-annotations = annotations.append(pd.read_csv('../data/train/Annotations/test_b.csv'), ignore_index=True)
 annotations = annotations.append(pd.read_csv('../data/train/Annotations/annotations.csv'), ignore_index=True)
 annotations = annotations.append(pd.read_csv('../data/train/Annotations/train.csv'), ignore_index=True)
 # annotations = annotations.loc[annotations['image_category'] == fi_class_names]

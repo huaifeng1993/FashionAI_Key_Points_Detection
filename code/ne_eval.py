@@ -1,7 +1,7 @@
 ### 按照阿里提的标准计算错误率
 import  numpy as np
 import  cv2
-GT_FILE = '../data/train/Annotations/test_b.csv'  ### 真值文件
+GT_FILE = '../data/val/test_b.csv'  ### 真值文件
 PRED_FILE = '../submit/test.csv'### 预测的文件
 
 
