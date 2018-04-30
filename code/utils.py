@@ -635,7 +635,7 @@ def get_keypoints(img_category):
                     'cuff_left_out':'cuff_right_out',
                     'top_hem_left': 'top_hem_right'}
     skirt_flip_map={
-                   'waistline_left': 'waistline_right',
+                   'waistband_left': 'waistband_right',
                    'hemline_left': 'hemline_right'
                   }
 
