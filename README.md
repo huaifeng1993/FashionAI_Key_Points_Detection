@@ -5,7 +5,7 @@
 ----------------------------------
 
 从入学以来接触深度学习大约有半年时间，偶然得知天池大数据竞赛，便想尝试一下，从三月初报名，
-然后找论文，找代码写代码，优化。最终排名105略显尴尬，最终得分12.81%可能会进复赛。本次采用maskrcnn
+然后找论文，找代码写代码，优化。最终排名67/2352，最终得分10左右%可能会进复赛。本次采用maskrcnn
 进行点的预测，部分结果如下：  
 <img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/blouse.jpg" width="300" height="300" alt="blouse" align=center /><img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/dress.jpg" width="300" height="300" alt="dress" align=center />
 <img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/outwear.jpg" width="300" height="300" alt="outwear" align=center /><img src="https://github.com/huaifeng1993/FashionAI_key_point_location/blob/master/images/skirt.jpg" width="300" height="300" alt="skirt" align=center />
@@ -35,11 +35,12 @@ project
         |--Images  
         |--Annotations  
            |--annotation.csv  
-           |--train.csv 
-           |--test_b.csv  		   
+           |--train.csv   		   
            |--test_a.csv
            |--data_scaling.csv
            |--data_flip_up_down.csv
+     |--val
+        |--test_b.csv
   |--code   
   |--submit   
      |--类别_resutl_b.csv  
@@ -86,15 +87,6 @@ logs/类别_logs文件夹下。例如对blouse训练，只需要令fi_class_name
 ## 7.下载
   models:[BaiduCloud](https://pan.baidu.com/s/12_4EPT6_E6dedNriA-ifeQ)把模型下载放在model文件夹下。
   dataset:[BaiduCloud](https://pan.baidu.com/s/1mafQ8N9G1PReGpOgLM7LQw) 
-
-## 8.Update
-#### 2018.4.27  
-  We update two scripts to extend our dataset:  
-  *data_flip_up_down.py*:This file is used to generate the upside-down images from the original images. It will generate a new folder named "Images_flip" with changed images in folder "data" and a new CSV file named data_flip_up_down.csv with new labels in folder "data/Annotations"";  
-  
-  *data_scaling.py*:This file is aim to generate the images in a resized size about 0.5-0.75 from the original images. It will make a new folder named "Images_scaling" with changed images in folder "data" and labels file named data_scaling.csv  in folder "data/Annotations"";  
-  
-  Append the new CSV files in *load_FI_test* in *signal_train.py* if you want to use the new data.
 ## 感谢
   非常感谢  
   @Superlee506 [Mask_RCNN_Humanpose](https://github.com/Superlee506/Mask_RCNN_Humanpose)  
